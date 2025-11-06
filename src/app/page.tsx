@@ -1,5 +1,5 @@
-// This page has been moved to /src/app/(dashboard)/page.tsx to be part of the main layout.
-// This file can be removed.
+// This page is a placeholder. The main content is in /src/app/(dashboard)/page.tsx
+// and the layout in /src/app/(dashboard)/layout.tsx handles the auth redirect.
 export default function Page() {
   return null;
 }
