@@ -8,13 +8,20 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, User, Send, Loader2 } from 'lucide-react';
+import { Bot, User, Send, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 type ChatbotProps = {
   isPopup?: boolean;
 }
+
+const sampleQuestions = [
+  "What is anemia?",
+  "Ano ang mga sintomas ng anemia?",
+  "What are the common treatments?",
+  "Is anemia dangerous?",
+];
 
 export function Chatbot({ isPopup = false }: ChatbotProps) {
   const [history, setHistory] = useState<Message[]>([
@@ -34,18 +41,17 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
     }
   }, [history]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userInput.trim() || isLoading) return;
+  const sendMessage = async (message: string) => {
+    if (!message.trim() || isLoading) return;
 
-    const newHistory: Message[] = [...history, { role: 'user', content: userInput }];
+    const newHistory: Message[] = [...history, { role: 'user', content: message }];
     setHistory(newHistory);
     setUserInput('');
     setIsLoading(true);
 
     try {
       const result = await runAnswerAnemiaQuestion({
-        question: userInput,
+        question: message,
       });
 
       setHistory(prev => [...prev, { role: 'assistant', content: result.answer }]);
@@ -68,6 +74,16 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
       setIsLoading(false);
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(userInput);
+  };
+  
+  const handleSampleQuestionClick = (question: string) => {
+    sendMessage(question);
+  };
+
 
   const ChatHeader = () => (
     <CardHeader className="border-b">
@@ -108,7 +124,28 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
                 {msg.role === 'user' && <Avatar className="h-8 w-8"><AvatarFallback><User size={18}/></AvatarFallback></Avatar>}
               </div>
             ))}
-            {isLoading && (
+             {history.length === 1 && !isLoading && (
+              <div className="pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Or try one of these sample questions:</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {sampleQuestions.map((q, i) => (
+                    <Button 
+                      key={i} 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-left h-auto justify-start"
+                      onClick={() => handleSampleQuestionClick(q)}
+                    >
+                      {q}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {isLoading && history.length > 1 && (
               <div className="flex items-start gap-3 justify-start">
                  <Avatar className="h-8 w-8 bg-primary text-primary-foreground"><AvatarFallback><Bot size={18}/></AvatarFallback></Avatar>
                 <div className="rounded-lg p-3 bg-muted flex items-center justify-center">
