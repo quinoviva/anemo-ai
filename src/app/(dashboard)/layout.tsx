@@ -19,21 +19,24 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (isUserLoading) {
-      return;
+      return; // Do nothing while loading
     }
     if (!user) {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
 
+  // While loading or if no user, show a loading spinner.
+  // This prevents rendering children before the user is confirmed.
   if (isUserLoading || !user) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
+  // If user is authenticated, render the full dashboard layout.
   return (
     <SidebarProvider>
       <Sidebar collapsible="none">
