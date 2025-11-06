@@ -118,7 +118,7 @@ export function SignUpForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create an Account</CardTitle>
+        <CardTitle>Create a New Account</CardTitle>
         <CardDescription>
           Enter your details to get started.
         </CardDescription>
