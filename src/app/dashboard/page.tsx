@@ -46,7 +46,7 @@ export default function DashboardPage() {
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
           Anemo Check
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+        <p className="mx-auto max-w-2xl text-lg font-bold text-muted-foreground">
           {welcomeMessage}
         </p>
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
