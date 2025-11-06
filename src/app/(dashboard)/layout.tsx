@@ -1,4 +1,3 @@
-
 'use client';
 import React from 'react';
 import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
@@ -53,7 +52,7 @@ export default function DashboardLayout({
 
   // If the user is authenticated, render the dashboard layout.
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <Sidebar>
         <SidebarNav />
       </Sidebar>
