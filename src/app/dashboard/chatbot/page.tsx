@@ -1,3 +1,5 @@
+'use client';
+
 import { Chatbot } from '@/components/anemo/Chatbot';
 
 export default function ChatbotPage() {
@@ -9,7 +11,7 @@ export default function ChatbotPage() {
           Ask me anything about anemia. I can assist you in English, Tagalog, and more.
         </p>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 min-h-0">
         <Chatbot />
       </div>
     </div>

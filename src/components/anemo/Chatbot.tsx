@@ -15,15 +15,20 @@ type Message = { role: 'user' | 'assistant'; content: string };
 
 export function Chatbot() {
   const [history, setHistory] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I am Anemo Check's AI assistant. How can I help you today with your questions about anemia?" },
+    { role: 'assistant', content: "Hello! I am the Anemo Check AI assistant. How can I help you with your questions about anemia?" },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const chatBottomRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }, [history]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,7 +48,12 @@ export function Chatbot() {
       setHistory(prev => [...prev, { role: 'assistant', content: result.answer }]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-      setHistory(prev => [...prev, { role: 'assistant', content: `I'm sorry, but I encountered an error. Please try again. (${errorMessage})` }]);
+       let displayMessage = `I'm sorry, but I encountered an error. Please try again.`;
+       if (errorMessage.includes('API key not valid')) {
+         displayMessage = "It seems there's an issue with the configuration. Please ensure you have a valid API key in your .env file."
+       }
+
+      setHistory(prev => [...prev, { role: 'assistant', content: displayMessage }]);
       toast({
         title: "Chat Error",
         description: errorMessage,
@@ -57,8 +67,8 @@ export function Chatbot() {
   return (
     <Card className="h-full flex flex-col">
       <CardContent className="p-4 flex-1 flex flex-col overflow-hidden">
-        <ScrollArea className="flex-grow pr-4 -mr-4 mb-4">
-          <div className="space-y-4">
+        <ScrollArea className="flex-grow mb-4" ref={scrollAreaRef}>
+          <div className="space-y-4 pr-4">
             {history.map((msg, i) => (
               <div key={i} className={cn("flex items-start gap-3", msg.role === 'user' ? "justify-end" : "justify-start")}>
                 {msg.role === 'assistant' && <Avatar className="h-8 w-8 bg-primary text-primary-foreground"><AvatarFallback><Bot size={18}/></AvatarFallback></Avatar>}
@@ -69,13 +79,13 @@ export function Chatbot() {
               </div>
             ))}
             {isLoading && (
-              <div className="flex justify-start">
+              <div className="flex items-start gap-3 justify-start">
+                 <Avatar className="h-8 w-8 bg-primary text-primary-foreground"><AvatarFallback><Bot size={18}/></AvatarFallback></Avatar>
                 <div className="rounded-lg p-3 bg-muted">
                   <Loader2 className="h-5 w-5 animate-spin text-primary" />
                 </div>
               </div>
             )}
-            <div ref={chatBottomRef} />
           </div>
         </ScrollArea>
         <form onSubmit={handleSubmit} className="flex items-center gap-2 border-t pt-4">
