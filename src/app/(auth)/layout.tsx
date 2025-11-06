@@ -19,7 +19,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <path d="M3.22 12H9.5l.7-1 2.1 4.2 1.6-3.2 1.6 3.2h3.22" />
           </svg>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            AnemoCheck AI
+            Anemo Check
           </h1>
         </div>
         {children}

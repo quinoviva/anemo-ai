@@ -15,7 +15,7 @@ type Message = { role: 'user' | 'assistant'; content: string };
 
 export function Chatbot() {
   const [history, setHistory] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I am AnemoCheck's AI assistant. How can I help you today with your questions about anemia?" },
+    { role: 'assistant', content: "Hello! I am Anemo Check's AI assistant. How can I help you today with your questions about anemia?" },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

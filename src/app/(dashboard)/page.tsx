@@ -6,7 +6,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Anemia Check Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Anemo Check Dashboard</h1>
         <p className="text-muted-foreground">
           Upload an image to start your analysis or explore other features.
         </p>

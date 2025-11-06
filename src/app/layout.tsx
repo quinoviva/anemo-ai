@@ -8,7 +8,7 @@ import { FirebaseClientProvider } from '@/firebase';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'AnemoCheck AI',
+  title: 'Anemo Check',
   description: 'Intelligent anemia detection using AI',
 };
 
