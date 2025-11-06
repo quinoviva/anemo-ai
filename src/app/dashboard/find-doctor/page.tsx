@@ -10,14 +10,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Search, Stethoscope, Hospital, HeartPulse, Loader2 } from 'lucide-react';
+import { Search, Stethoscope, Hospital, HeartPulse, Loader2, Phone, Clock, Globe, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 type Clinic = {
   name: string;
   type: 'Hospital' | 'Doctor' | 'Clinic';
   address: string;
+  contact?: string;
+  hours?: string;
+  website?: string;
+  notes?: string;
 };
 
 const iconMap = {
@@ -37,8 +42,11 @@ export default function FindDoctorPage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
-      setResults([]);
-      setHasSearched(false);
+      toast({
+        title: "Search query is empty",
+        description: "Please enter a location to search.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -66,7 +74,7 @@ export default function FindDoctorPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Find a Doctor</h1>
         <p className="text-muted-foreground">
-          Use our AI to search for doctors, clinics, and hospitals in Iloilo City.
+          Use our AI to search for doctors, clinics, and hospitals in Iloilo.
         </p>
       </div>
 
@@ -77,7 +85,7 @@ export default function FindDoctorPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                 type="text"
-                placeholder="Enter a location, e.g., 'near Jaro Cathedral'"
+                placeholder="Enter a location, e.g., 'near Jaro Cathedral' or 'hospitals in Oton'"
                 className="pl-10 text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -98,28 +106,62 @@ export default function FindDoctorPage() {
               </div>
             ) : hasSearched && results.length > 0 ? (
                 results.map((clinic, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between rounded-md border p-4"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-10 w-10">
+                  <Card key={index} className="p-4">
+                    <div className="flex items-start gap-4">
+                       <Avatar className="h-10 w-10 border">
                         <AvatarFallback className="bg-secondary">
                           {iconMap[clinic.type]}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="flex-1">
                         <p className="font-semibold">{clinic.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {clinic.address}
+                        <p className="text-sm text-muted-foreground flex items-start gap-1.5 mt-1">
+                          <MapPin className="h-4 w-4 mt-0.5 shrink-0"/> <span>{clinic.address}</span>
                         </p>
+                        
+                        <div className="mt-3 space-y-2 text-sm">
+                           {clinic.contact && clinic.contact !== 'N/A' && (
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              <Phone className="h-4 w-4 shrink-0" /> <span className="font-medium">{clinic.contact}</span>
+                            </div>
+                           )}
+                           {clinic.hours && (
+                             <div className="flex items-center gap-2 text-muted-foreground">
+                              <Clock className="h-4 w-4 shrink-0" /> <span className="font-medium">{clinic.hours}</span>
+                            </div>
+                           )}
+                           {clinic.website && clinic.website !== 'N/A' && (
+                             <div className="flex items-center gap-2 text-muted-foreground">
+                              <Globe className="h-4 w-4 shrink-0" />
+                              <a href={clinic.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium break-all">
+                                {clinic.website}
+                              </a>
+                            </div>
+                           )}
+                           {clinic.notes && (
+                             <p className='text-xs text-muted-foreground pt-1 italic'>{clinic.notes}</p>
+                           )}
+                        </div>
+
+                        <div className='mt-4 flex gap-2'>
+                           <Button variant="outline" size="sm" asChild>
+                              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinic.name + ', ' + clinic.address)}`} target="_blank" rel="noopener noreferrer">
+                                <MapPin />
+                                View on Map
+                              </a>
+                           </Button>
+                           {clinic.website && clinic.website !== 'N/A' && (
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={clinic.website} target="_blank" rel="noopener noreferrer">
+                                  <Globe />
+                                  Visit Website
+                                </a>
+                            </Button>
+                           )}
+                        </div>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                      {/* In a real app, this would link to a details page */}
-                      <Link href="#">View Details</Link>
-                    </Button>
-                  </div>
+                  </Card>
                 ))
             ) : hasSearched ? (
                  <div className="text-center py-10">
