@@ -14,12 +14,16 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/firebase';
 import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Menu, Stethoscope, HeartPulse, History, User } from 'lucide-react';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Home' },
-  { href: '/dashboard/analysis', label: 'Analysis' },
-  { href: '/dashboard/history', label: 'History' },
-  { href: '/dashboard/profile', label: 'Profile' },
+  { href: '/dashboard', label: 'Home', icon: HeartPulse },
+  { href: '/dashboard/analysis', label: 'Analysis', icon: Stethoscope },
+  { href: '/dashboard/history', label: 'History', icon: History },
+  { href: '/dashboard/chatbot', label: 'AI Assistant', icon: User },
+  { href: '/dashboard/live-analysis', label: 'Live Analysis', icon: User },
+  { href: '/dashboard/find-doctor', label: 'Find a Doctor', icon: User },
 ];
 
 export function Header() {
@@ -28,7 +32,9 @@ export function Header() {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    await auth.signOut();
+    if (auth) {
+      await auth.signOut();
+    }
     router.push('/login');
   };
 
@@ -43,23 +49,26 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-      <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-6 w-6 text-primary"
-        >
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-          <path d="M3.22 12H9.5l.7-1 2.1 4.2 1.6-3.2 1.6 3.2h3.22" />
-        </svg>
-        <span className="">Anemo Check</span>
-      </Link>
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-6 w-6 text-primary"
+          >
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            <path d="M3.22 12H9.5l.7-1 2.1 4.2 1.6-3.2 1.6 3.2h3.22" />
+          </svg>
+          <span className="sr-only">Anemo Check</span>
+        </Link>
         {navLinks.map(({ href, label }) => (
           <Link
             key={href}
@@ -73,18 +82,62 @@ export function Header() {
           </Link>
         ))}
       </nav>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left">
+          <nav className="grid gap-6 text-lg font-medium">
+            <Link
+              href="#"
+              className="flex items-center gap-2 text-lg font-semibold"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6 text-primary"
+              >
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                <path d="M3.22 12H9.5l.7-1 2.1 4.2 1.6-3.2 1.6 3.2h3.22" />
+              </svg>
+              <span className="sr-only">Anemo Check</span>
+            </Link>
+            {navLinks.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
+                  { 'bg-muted text-foreground': pathname === href }
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
       <div className="ml-auto flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar>
                 <AvatarImage
-                  src={auth.currentUser?.photoURL ?? undefined}
+                  src={auth?.currentUser?.photoURL ?? undefined}
                   data-ai-hint="person face"
                 />
                 <AvatarFallback>
                   {getInitials(
-                    auth.currentUser?.displayName ?? auth.currentUser?.email
+                    auth?.currentUser?.displayName ?? auth?.currentUser?.email
                   )}
                 </AvatarFallback>
               </Avatar>
@@ -92,13 +145,18 @@ export function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
-              <p className="font-medium">{auth.currentUser?.displayName}</p>
+              <p className="font-medium">
+                {auth?.currentUser?.displayName || 'Guest'}
+              </p>
               <p className="text-xs text-muted-foreground">
-                {auth.currentUser?.email}
+                {auth?.currentUser?.email || 'No email provided'}
               </p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
