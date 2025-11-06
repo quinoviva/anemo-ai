@@ -135,7 +135,7 @@ export default function ProfilePage() {
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
     const names = name.split(' ');
-    return names.length > 1
+    return names.length > 1 && names[1]
       ? `${names[0][0]}${names[names.length - 1][0]}`
       : name[0] || 'U';
   };
@@ -152,7 +152,7 @@ export default function ProfilePage() {
       const downloadURL = await getDownloadURL(snapshot.ref);
 
       form.setValue('photoURL', downloadURL);
-      toast({ title: 'Success', description: 'Profile picture updated.' });
+      toast({ title: 'Success', description: 'Profile picture selected. Click "Save Changes" to apply.' });
     } catch (error) {
       toast({
         title: 'Upload Failed',
@@ -199,6 +199,9 @@ export default function ProfilePage() {
         },
         { merge: true }
       );
+      
+      // Dispatch event to notify header
+      window.dispatchEvent(new CustomEvent('profile-updated'));
 
       toast({
         title: 'Profile Updated',
@@ -510,5 +513,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    

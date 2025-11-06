@@ -15,8 +15,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/firebase';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Menu, HeartPulse, History, Bot, Video, Stethoscope, Settings } from 'lucide-react';
+import { Menu, HeartPulse, History, Bot, Stethoscope } from 'lucide-react';
 import { Cog } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
   { href: '/dashboard', label: 'Home', icon: HeartPulse },
@@ -28,6 +29,20 @@ export function Header() {
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [, setForceRender] = useState(0);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      // Force a re-render by updating state
+      setForceRender(Math.random());
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdate);
+
+    return () => {
+      window.removeEventListener('profile-updated', handleProfileUpdate);
+    };
+  }, []);
 
   const handleLogout = async () => {
     if (auth) {
@@ -39,7 +54,7 @@ export function Header() {
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
     const names = name.split(' ');
-    if (names.length > 1) {
+    if (names.length > 1 && names[1]) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
     }
     return name[0] || 'U';
@@ -143,6 +158,8 @@ export function Header() {
               <Avatar>
                 <AvatarImage
                   src={auth?.currentUser?.photoURL ?? undefined}
+                  // By adding a key that changes, we force React to re-mount the component
+                  key={auth?.currentUser?.photoURL}
                   data-ai-hint="person face"
                 />
                 <AvatarFallback>
