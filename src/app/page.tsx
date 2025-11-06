@@ -1,5 +1,4 @@
-// This page is a placeholder. The main content is in /src/app/(dashboard)/page.tsx
-// and the layout in /src/app/(dashboard)/layout.tsx handles the auth redirect.
+// This page is intentionally left blank to allow the dashboard layout to handle routing.
 export default function Page() {
   return null;
 }
