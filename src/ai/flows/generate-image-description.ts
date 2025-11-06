@@ -21,7 +21,7 @@ const GenerateImageDescriptionInputSchema = z.object({
 export type GenerateImageDescriptionInput = z.infer<typeof GenerateImageDescriptionInputSchema>;
 
 const GenerateImageDescriptionOutputSchema = z.object({
-  description: z.string().describe('A description of the image.'),
+  description: z.string().describe('A description of the image, including any warnings about makeup or other obstructions.'),
   isValid: z.boolean().describe('Whether the image is valid for anemia detection (skin, under-eye, or fingernail).'),
 });
 export type GenerateImageDescriptionOutput = z.infer<typeof GenerateImageDescriptionOutputSchema>;
@@ -43,10 +43,15 @@ You will receive a photo, and your primary job is to determine if it is a valid 
 First, briefly describe the main subject of the image.
 
 Next, analyze the image to determine if it is valid for anemia detection.
-- If the image contains a clear view of skin, the under-eye area, or fingernails, set the 'isValid' field to true.
-- If the image does NOT contain one of these valid subjects (e.g., it's a car, a landscape, an animal), set 'isValid' to false.
+- A valid image must contain a clear view of skin, the under-eye area, or fingernails.
+- The image must be free of makeup, nail polish, or other coverings that could obscure the natural skin tone.
 
-If the image is not valid, your description must explain why. For example: "This is a photo of a car. For anemia analysis, a picture of skin, the under-eye area, or fingernails is required."
+Based on this, set the 'isValid' field to true or false.
+
+Finally, generate the description:
+- If the image is valid and free of makeup/nail polish, your description should confirm this (e.g., "A clear image of an under-eye area, suitable for analysis.").
+- If the image contains makeup, nail polish, or other obstructions, your description MUST include a warning. For example: "This appears to be an under-eye area, but the person is wearing makeup, which may affect the accuracy of the analysis. For best results, please use a photo without makeup." Even with this warning, if the body part is correct, 'isValid' can still be true.
+- If the image is not a valid subject (e.g., it's a car, a landscape), your description must explain why it's invalid. For example: "This is a photo of a car. For anemia analysis, a picture of skin, the under-eye area, or fingernails is required." In this case, set 'isValid' to false.
 
 Image: {{media url=photoDataUri}}`,
 });
