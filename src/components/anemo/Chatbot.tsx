@@ -133,7 +133,7 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
                   {sampleQuestions.map((q, i) => (
                     <Button 
                       key={i} 
-                      variant="outline" 
+                      variant="ghost" 
                       size="sm" 
                       className="text-left h-auto justify-start whitespace-normal"
                       onClick={() => handleSampleQuestionClick(q)}
