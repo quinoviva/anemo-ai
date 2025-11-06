@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
@@ -19,16 +18,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '@/firebase';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Menu, HeartPulse, History, Stethoscope, Moon, Sun, Monitor } from 'lucide-react';
+import { Menu, HeartPulse, History, Stethoscope, Moon, Sun, Monitor, Bot, Video, Search } from 'lucide-react';
 import { Cog } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-
 
 const navLinks = [
   { href: '/dashboard', label: 'Home', icon: HeartPulse },
   { href: '/dashboard/analysis', label: 'Analysis', icon: Stethoscope },
   { href: '/dashboard/history', label: 'Track', icon: History },
+  { href: '/dashboard/chatbot', label: 'AI Assistant', icon: Bot },
+  { href: '/dashboard/live-analysis', label: 'Live Analysis', icon: Video },
+  { href: '/dashboard/find-doctor', label: 'Find a Doctor', icon: Search },
 ];
 
 export function Header() {
@@ -40,7 +41,6 @@ export function Header() {
 
   useEffect(() => {
     const handleProfileUpdate = () => {
-      // Force a re-render by updating state
       setForceRender(Math.random());
     };
 
@@ -144,18 +144,33 @@ export function Header() {
       </div>
 
       <nav className="hidden flex-grow items-center justify-center gap-5 text-sm font-medium md:flex lg:gap-6">
-        {navLinks.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn(
-              'transition-colors hover:text-foreground',
-              pathname === href ? 'text-foreground' : 'text-muted-foreground'
-            )}
-          >
-            {label}
-          </Link>
-        ))}
+        <Link
+          href={'/dashboard'}
+          className={cn(
+            'transition-colors hover:text-foreground',
+            pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'
+          )}
+        >
+          Home
+        </Link>
+        <Link
+          href={'/dashboard/analysis'}
+          className={cn(
+            'transition-colors hover:text-foreground',
+            pathname === '/dashboard/analysis' ? 'text-foreground' : 'text-muted-foreground'
+          )}
+        >
+          Analysis
+        </Link>
+        <Link
+          href={'/dashboard/history'}
+          className={cn(
+            'transition-colors hover:text-foreground',
+            pathname === '/dashboard/history' ? 'text-foreground' : 'text-muted-foreground'
+          )}
+        >
+          Track
+        </Link>
       </nav>
 
       <div className="flex items-center gap-4">
@@ -165,7 +180,6 @@ export function Header() {
               <Avatar>
                 <AvatarImage
                   src={auth?.currentUser?.photoURL ?? undefined}
-                  // By adding a key that changes, we force React to re-mount the component
                   key={auth?.currentUser?.photoURL}
                   data-ai-hint="person face"
                 />
