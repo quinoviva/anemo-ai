@@ -30,7 +30,7 @@ const navLinks = [
   { href: '/dashboard/history', label: 'Track', icon: History },
   { href: '/dashboard/chatbot', label: 'ChatbotAI', icon: Bot },
   { href: '/dashboard/live-analysis', label: 'Live Analysis', icon: Video },
-  { href: '/dashboard/find-doctor', label: 'Find a Doctor', icon: Search },
+  { href: '/dashboard/find-doctor', label: 'Nearby Providers', icon: Search },
 ];
 
 export function Header() {

@@ -57,7 +57,7 @@ export default function DashboardPage() {
             <Link href="/dashboard/analysis">Start Analysis</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="/dashboard/find-doctor">Find a Doctor</Link>
+            <Link href="/dashboard/find-doctor">Nearby Healthcare Providers</Link>
           </Button>
         </div>
       </div>

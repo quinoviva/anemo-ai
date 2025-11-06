@@ -72,7 +72,7 @@ export default function FindDoctorPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Find a Doctor</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Nearby Healthcare Providers</h1>
         <p className="text-muted-foreground">
           Use our AI to search for doctors, clinics, and hospitals in Iloilo.
         </p>
