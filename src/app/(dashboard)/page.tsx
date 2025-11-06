@@ -1,9 +1,23 @@
 
+'use client';
+
 import { ImageAnalyzer } from '@/components/anemo/ImageAnalyzer';
 import { FeatureCard } from '@/components/anemo/FeatureCard';
 import { Video, Stethoscope } from 'lucide-react';
+import { useUser } from '@/firebase';
+import { redirect } from 'next/navigation';
 
 export default function RootPage() {
+  const { user, isUserLoading } = useUser();
+
+  if (isUserLoading) {
+    return null; 
+  }
+
+  if (!user) {
+    redirect('/login');
+  }
+
   return (
     <div className="space-y-8">
         <div>
