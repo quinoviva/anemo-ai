@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { runFindNearbyClinics } from '@/app/actions';
 import {
   Card,
   CardHeader,
@@ -21,6 +20,39 @@ type Clinic = {
   address: string;
 };
 
+const allClinics: Clinic[] = [
+    {
+      name: 'Iloilo Doctors’ Hospital',
+      type: 'Hospital',
+      address: 'West Timawa Avenue, Molo, Iloilo City',
+    },
+    {
+      name: 'The Medical City Iloilo',
+      type: 'Hospital',
+      address: 'Lopez Jaena St, Molo, Iloilo City',
+    },
+    {
+      name: 'Dr. Zaxius Berina, MD (Internal Medicine)',
+      type: 'Doctor',
+      address: 'Medicus Medical Center, Mandurriao, Iloilo City',
+    },
+    {
+      name: 'AnemoCare Clinic',
+      type: 'Clinic',
+      address: 'Jaro, Iloilo City',
+    },
+    {
+      name: 'QualiMed Hospital Iloilo',
+      type: 'Hospital',
+      address: 'Donato Pison Ave, Mandurriao, Iloilo City',
+    },
+    {
+      name: 'Iloilo Mission Hospital',
+      type: 'Hospital',
+      address: 'Mission Rd, Jaro, Iloilo City',
+    },
+];
+
 const iconMap = {
     Hospital: <Hospital className="h-5 w-5 text-primary" />,
     Doctor: <Stethoscope className="h-5 w-5 text-primary" />,
@@ -34,34 +66,37 @@ export default function FindDoctorPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const { toast } = useToast();
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+        setResults([]);
+        setHasSearched(false);
+        return;
+    };
 
     setIsSearching(true);
     setHasSearched(true);
-    try {
-      const response = await runFindNearbyClinics({ query: searchQuery });
-      setResults(response.results);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-      toast({
-        title: 'Search Failed',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-      setResults([]);
-    } finally {
-      setIsSearching(false);
-    }
+    
+    // Simulate a short delay for a better user experience
+    setTimeout(() => {
+        const lowercasedQuery = searchQuery.toLowerCase();
+        const filteredResults = allClinics.filter(clinic => 
+            clinic.name.toLowerCase().includes(lowercasedQuery) ||
+            clinic.address.toLowerCase().includes(lowercasedQuery)
+        );
+        setResults(filteredResults);
+        setIsSearching(false);
+    }, 300);
   };
+
+  const currentList = searchQuery.trim() ? results : allClinics;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Find a Doctor</h1>
         <p className="text-muted-foreground">
-          Use our AI to search for doctors, clinics, and hospitals in Iloilo City.
+          Search for doctors, clinics, and hospitals in Iloilo City.
         </p>
       </div>
 
@@ -69,7 +104,7 @@ export default function FindDoctorPage() {
         <CardHeader>
           <CardTitle>Search Healthcare Providers</CardTitle>
           <CardDescription>
-            Enter a location, address, or landmark to find the nearest facility.
+            Enter a name, location, or address to filter the list below.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -82,10 +117,9 @@ export default function FindDoctorPage() {
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                disabled={isSearching}
               />
             </div>
-            <Button type="submit" disabled={isSearching || !searchQuery.trim()}>
+            <Button type="submit">
               {isSearching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Search
             </Button>
@@ -95,11 +129,16 @@ export default function FindDoctorPage() {
             {isSearching ? (
               <div className="flex justify-center items-center py-10">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="ml-4 text-muted-foreground">Our AI is searching for you...</p>
+                <p className="ml-4 text-muted-foreground">Searching...</p>
               </div>
-            ) : hasSearched ? (
-              results.length > 0 ? (
-                results.map((clinic, index) => (
+            ) : hasSearched && results.length === 0 ? (
+                 <div className="text-center py-10">
+                  <p className="text-muted-foreground">
+                    No results found for "{searchQuery}". Try a different search.
+                  </p>
+                </div>
+            ) : (
+                currentList.map((clinic, index) => (
                   <div
                     key={index}
                     className="flex items-center justify-between rounded-md border p-4"
@@ -122,19 +161,6 @@ export default function FindDoctorPage() {
                     </Button>
                   </div>
                 ))
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">
-                    No results found for "{searchQuery}". Try a different search.
-                  </p>
-                </div>
-              )
-            ) : (
-                 <div className="text-center py-10">
-                  <p className="text-muted-foreground">
-                    Enter a search query to find nearby healthcare providers.
-                  </p>
-                </div>
             )}
           </div>
         </CardContent>
