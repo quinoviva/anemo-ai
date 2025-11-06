@@ -11,16 +11,14 @@ type FeatureCardProps = {
   description: string;
   icon: React.ReactNode;
   href: string;
-  disabled?: boolean;
 };
 
-export function FeatureCard({ title, description, icon, href, disabled }: FeatureCardProps) {
+export function FeatureCard({ title, description, icon, href }: FeatureCardProps) {
   const content = (
-    <Card className={cn("transition-all", disabled ? "bg-muted/50" : "hover:shadow-md hover:border-primary/50")}>
+    <Card className={cn("transition-all", "hover:shadow-md hover:border-primary/50")}>
       <CardHeader>
         <div className="flex items-start justify-between">
           {icon}
-          {disabled && <Badge variant="secondary">Coming Soon</Badge>}
         </div>
         <div className="mt-4">
           <CardTitle>{title}</CardTitle>
@@ -29,10 +27,6 @@ export function FeatureCard({ title, description, icon, href, disabled }: Featur
       </CardHeader>
     </Card>
   );
-
-  if (disabled) {
-    return <div className="cursor-not-allowed">{content}</div>;
-  }
 
   return <Link href={href}>{content}</Link>;
 }

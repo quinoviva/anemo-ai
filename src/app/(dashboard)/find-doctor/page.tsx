@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { FeatureCard } from "@/components/anemo/FeatureCard";
 import { Stethoscope } from "lucide-react";
 
 export default function FindDoctorPage() {

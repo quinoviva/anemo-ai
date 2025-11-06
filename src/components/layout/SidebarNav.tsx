@@ -23,8 +23,8 @@ const menuItems = [
   { href: '/', label: 'Dashboard', icon: LayoutGrid },
   { href: '/history', label: 'Analysis History', icon: History },
   { href: '/chatbot', label: 'AI Chatbot', icon: Bot },
-  { href: '/live-analysis', label: 'Live Analysis', icon: Video, disabled: true },
-  { href: '/find-doctor', label: 'Find a Doctor', icon: Stethoscope, disabled: true },
+  { href: '/live-analysis', label: 'Live Analysis', icon: Video },
+  { href: '/find-doctor', label: 'Find a Doctor', icon: Stethoscope },
 ];
 
 export function SidebarNav() {
@@ -58,12 +58,9 @@ export function SidebarNav() {
               <SidebarMenuButton
                 isActive={pathname === item.href}
                 tooltip={item.label}
-                aria-disabled={item.disabled}
-                disabled={item.disabled}
               >
                 <item.icon />
                 <span>{item.label}</span>
-                {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
