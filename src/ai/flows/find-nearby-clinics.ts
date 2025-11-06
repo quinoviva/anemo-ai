@@ -71,7 +71,19 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Specializes in maternal and child health.' },
         { name: 'Sara District Hospital', type: 'Hospital', address: 'Sara, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government district hospital.' },
     ];
-    return { results: simulatedResults.filter(r => r.address.toLowerCase().includes(query.toLowerCase()) || r.name.toLowerCase().includes(query.toLowerCase())) };
+    
+    if (!query) {
+      return { results: simulatedResults };
+    }
+
+    const lowerCaseQuery = query.toLowerCase();
+    const filteredResults = simulatedResults.filter(r => 
+      r.name.toLowerCase().includes(lowerCaseQuery) ||
+      r.address.toLowerCase().includes(lowerCaseQuery) ||
+      r.notes.toLowerCase().includes(lowerCaseQuery)
+    );
+
+    return { results: filteredResults };
   }
 );
 
@@ -108,7 +120,7 @@ const findNearbyClinicsFlow = ai.defineFlow(
 
     const toolResponse = llmResponse.toolRequests;
 
-    if (toolResponse.length > 0 && toolResponse[0].name === 'searchForHealthcareProviders') {
+    if (toolResponse.length > 0 && toolResponse[0].tool.name === 'searchForHealthcareProviders') {
         const searchResult = await searchForHealthcareProviders(toolResponse[0].input);
         return searchResult;
     }
