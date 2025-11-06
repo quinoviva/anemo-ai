@@ -60,7 +60,7 @@ export function LoginForm() {
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       toast({
         title: 'Login Failed',
@@ -77,7 +77,7 @@ export function LoginForm() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       toast({
         title: 'Google Sign-In Failed',
@@ -93,7 +93,7 @@ export function LoginForm() {
     setIsGuestLoading(true);
     try {
       await signInAnonymously(auth);
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       toast({
         title: 'Guest Sign-In Failed',
