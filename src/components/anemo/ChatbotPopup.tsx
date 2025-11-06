@@ -21,7 +21,7 @@ export function ChatbotPopup() {
           <span className="sr-only">Open Chat</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 h-[500px] p-0 mr-4 mb-1 flex flex-col rounded-xl">
+      <PopoverContent className="w-96 h-[600px] p-0 mr-4 mb-1 flex flex-col rounded-xl shadow-2xl">
         <Chatbot isPopup={true} />
       </PopoverContent>
     </Popover>

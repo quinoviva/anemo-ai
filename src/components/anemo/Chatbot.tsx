@@ -54,12 +54,14 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
        let displayMessage = `I'm sorry, but I encountered an error. Please try again.`;
        if (errorMessage.includes('API key not valid')) {
          displayMessage = "It seems there's an issue with the configuration. Please ensure you have a valid API key in your .env file."
+       } else if (errorMessage.includes("GEMINI_API_KEY") || errorMessage.includes("GoogleGenerativeAI")) {
+        displayMessage = "The AI service is not configured correctly. Please check the API key."
        }
 
       setHistory(prev => [...prev, { role: 'assistant', content: displayMessage }]);
       toast({
         title: "Chat Error",
-        description: errorMessage,
+        description: displayMessage,
         variant: "destructive",
       });
     } finally {
@@ -68,21 +70,31 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
   };
 
   const ChatHeader = () => (
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <Bot className="h-6 w-6" />
+    <CardHeader className="border-b">
+      <CardTitle className="flex items-center gap-2 text-lg">
+        <Bot className="h-6 w-6 text-primary" />
         ChatbotAI
       </CardTitle>
-      {!isPopup && (
-        <CardDescription>
-          Ask me anything about anemia.
+      {isPopup && (
+        <CardDescription className="text-xs">
+          Your friendly anemia info assistant.
         </CardDescription>
       )}
     </CardHeader>
   )
 
   return (
-    <Card className="h-full flex flex-col shadow-none border-none">
+    <Card className={cn("h-full flex flex-col", isPopup ? "border-0 shadow-none" : "")}>
+      {!isPopup && (
+         <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            ChatbotAI
+          </CardTitle>
+            <CardDescription>
+              Ask me anything about anemia.
+            </CardDescription>
+        </CardHeader>
+      )}
       {isPopup && <ChatHeader />}
       <CardContent className="p-4 flex-1 flex flex-col overflow-hidden">
         <ScrollArea className="flex-grow mb-4" ref={scrollAreaRef}>
@@ -99,8 +111,10 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
             {isLoading && (
               <div className="flex items-start gap-3 justify-start">
                  <Avatar className="h-8 w-8 bg-primary text-primary-foreground"><AvatarFallback><Bot size={18}/></AvatarFallback></Avatar>
-                <div className="rounded-lg p-3 bg-muted">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <div className="rounded-lg p-3 bg-muted flex items-center justify-center">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s] mx-1"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
                 </div>
               </div>
             )}
@@ -114,7 +128,7 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
             disabled={isLoading}
             aria-label="Your question about anemia"
           />
-          <Button type="submit" disabled={!userInput.trim() || isLoading} aria-label="Send message">
+          <Button type="submit" size="icon" disabled={!userInput.trim() || isLoading} aria-label="Send message">
             <Send size={16} />
           </Button>
         </form>
