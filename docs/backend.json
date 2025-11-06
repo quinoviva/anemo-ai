@@ -22,6 +22,29 @@
           "type": "string",
           "description": "The email address of the user.",
           "format": "email"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
+        },
+        "medicalInfo": {
+          "type": "object",
+          "description": "User's medical information.",
+          "properties": {
+            "bloodType": {
+              "type": "string",
+              "description": "User's blood type."
+            },
+            "allergies": {
+              "type": "string",
+              "description": "User's known allergies."
+            },
+            "conditions": {
+              "type": "string",
+              "description": "User's pre-existing medical conditions."
+            }
+          }
         }
       },
       "required": [

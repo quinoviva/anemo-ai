@@ -43,11 +43,15 @@ service cloud.firestore {
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+      
+      function incomingData() {
+        return request.resource.data;
+      }
 
       // Allow the user to create their own profile if the UID matches the document ID.
       allow create: if isSignedIn()
                   && isOwner(userId)
-                  && request.resource.data.id == userId;
+                  && incomingData().id == userId;
 
       // Allow the user to read their own profile.
       allow get: if isSignedIn()
@@ -56,10 +60,11 @@ service cloud.firestore {
       // Disallow listing of all user profiles
       allow list: if false;
 
-      // Allow the user to update their own profile, enforcing immutability of the id.
+      // Allow the user to update their own profile, enforcing immutability of the id and email.
       allow update: if isSignedIn()
                    && isExistingOwner(userId)
-                   && request.resource.data.id == resource.data.id;
+                   && incomingData().id == resource.data.id
+                   && incomingData().email == resource.data.email;
 
       // Allow the user to delete their own profile.
       allow delete: if isSignedIn()
