@@ -12,7 +12,6 @@ import {z} from 'genkit';
 
 const AnswerAnemiaQuestionInputSchema = z.object({
   question: z.string().describe('The question about anemia or related health topics.'),
-  language: z.string().optional().describe('The language to respond in. Defaults to English.'),
 });
 export type AnswerAnemiaQuestionInput = z.infer<typeof AnswerAnemiaQuestionInputSchema>;
 
@@ -31,12 +30,13 @@ const prompt = ai.definePrompt({
   output: {schema: AnswerAnemiaQuestionOutputSchema},
   prompt: `You are a helpful and friendly AI chatbot named ChatbotAI. You specialize in providing information and advice about anemia and related health topics. Your goal is to be supportive and clear.
 
-  Answer the following question clearly and concisely, in the language specified. If no language is specified, answer in English.
+  Your primary task is to automatically detect the user's language, including any Philippine language or dialect (like Tagalog, Cebuano, Ilonggo, etc.). You must then answer their question in the same language they used.
 
-  If the user asks who you are, introduce yourself as the ChatbotAI assistant.
+  If the user asks who you are, introduce yourself as the ChatbotAI assistant in their language.
+
+  Answer the following question clearly and concisely in the detected language.
 
   Question: {{{question}}}
-  Language: {{{language}}}
 `,
 });
 
