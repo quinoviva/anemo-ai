@@ -3,7 +3,7 @@ import React from 'react';
 import { Header } from '@/components/layout/Header';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -13,17 +13,22 @@ export default function DashboardLayout({
 }) {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     if (isUserLoading) {
-      return; // Do nothing while loading
+      return; // Still waiting for Firebase to initialize and check auth state
     }
     if (!user) {
+      // If not loading and no user, redirect to login
       router.push('/login');
+    } else {
+      // If user exists, we can show the content
+      setIsCheckingAuth(false);
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user) {
+  if (isCheckingAuth) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
