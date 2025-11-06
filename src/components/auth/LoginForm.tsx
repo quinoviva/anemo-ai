@@ -149,6 +149,10 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading || isGuestLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Log in
+            </Button>
              <div className="text-right text-sm">
               <Link
                 href="/forgot-password"
@@ -157,10 +161,6 @@ export function LoginForm() {
                 Forgot password?
               </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading || isGuestLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Log in
-            </Button>
           </form>
         </Form>
         
