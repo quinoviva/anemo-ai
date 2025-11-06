@@ -12,8 +12,11 @@ import { Bot, User, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Message = { role: 'user' | 'assistant'; content: string };
+type ChatbotProps = {
+  isPopup?: boolean;
+}
 
-export function Chatbot() {
+export function Chatbot({ isPopup = false }: ChatbotProps) {
   const [history, setHistory] = useState<Message[]>([
     { role: 'assistant', content: "Hello! I am the Anemo Check AI assistant. How can I help you with your questions about anemia?" },
   ]);
@@ -64,8 +67,23 @@ export function Chatbot() {
     }
   };
 
+  const ChatHeader = () => (
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Bot className="h-6 w-6" />
+        AI Assistant
+      </CardTitle>
+      {!isPopup && (
+        <CardDescription>
+          Ask me anything about anemia.
+        </CardDescription>
+      )}
+    </CardHeader>
+  )
+
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col shadow-none border-none">
+      {isPopup && <ChatHeader />}
       <CardContent className="p-4 flex-1 flex flex-col overflow-hidden">
         <ScrollArea className="flex-grow mb-4" ref={scrollAreaRef}>
           <div className="space-y-4 pr-4">

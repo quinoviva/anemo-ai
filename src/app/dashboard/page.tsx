@@ -20,6 +20,7 @@ import {
   Hospital,
   HeartPulse,
 } from 'lucide-react';
+import { ChatbotPopup } from '@/components/anemo/ChatbotPopup';
 
 const mockClinics = [
   {
@@ -106,6 +107,7 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+      <ChatbotPopup />
     </div>
   );
 }
