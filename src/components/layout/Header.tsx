@@ -28,7 +28,7 @@ const navLinks = [
   { href: '/dashboard', label: 'Home', icon: HeartPulse },
   { href: '/dashboard/analysis', label: 'Analysis', icon: Stethoscope },
   { href: '/dashboard/history', label: 'Track', icon: History },
-  { href: '/dashboard/chatbot', label: 'AI Assistant', icon: Bot },
+  { href: '/dashboard/chatbot', label: 'ChatbotAI', icon: Bot },
   { href: '/dashboard/live-analysis', label: 'Live Analysis', icon: Video },
   { href: '/dashboard/find-doctor', label: 'Find a Doctor', icon: Search },
 ];

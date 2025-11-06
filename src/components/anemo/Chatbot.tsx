@@ -18,7 +18,7 @@ type ChatbotProps = {
 
 export function Chatbot({ isPopup = false }: ChatbotProps) {
   const [history, setHistory] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I am the Anemo Check AI assistant. How can I help you with your questions about anemia?" },
+    { role: 'assistant', content: "Hello! I am ChatbotAI. How can I help you with your questions about anemia?" },
   ]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +71,7 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
         <Bot className="h-6 w-6" />
-        AI Assistant
+        ChatbotAI
       </CardTitle>
       {!isPopup && (
         <CardDescription>
