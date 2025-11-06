@@ -102,7 +102,7 @@ export function ForgotPasswordForm() {
             href="/login"
             className="font-medium text-primary hover:underline"
           >
-            Sign in
+            Log in
           </Link>
         </p>
       </CardContent>
