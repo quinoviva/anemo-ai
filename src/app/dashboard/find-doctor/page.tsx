@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -11,7 +11,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
 import { Search, Stethoscope, Hospital, HeartPulse, Loader2 } from 'lucide-react';
 
 type Clinic = {
@@ -62,41 +61,34 @@ const iconMap = {
 export default function FindDoctorPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState<Clinic[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
-  const { toast } = useToast();
+  const [filteredResults, setFilteredResults] = useState<Clinic[]>(allClinics);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) {
-        setResults([]);
-        setHasSearched(false);
-        return;
-    };
-
+  useEffect(() => {
     setIsSearching(true);
-    setHasSearched(true);
-    
-    // Simulate a short delay for a better user experience
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim() === '') {
+        setFilteredResults(allClinics);
+      } else {
         const lowercasedQuery = searchQuery.toLowerCase();
-        const filteredResults = allClinics.filter(clinic => 
+        const results = allClinics.filter(clinic => 
             clinic.name.toLowerCase().includes(lowercasedQuery) ||
             clinic.address.toLowerCase().includes(lowercasedQuery)
         );
-        setResults(filteredResults);
-        setIsSearching(false);
-    }, 300);
-  };
+        setFilteredResults(results);
+      }
+      setIsSearching(false);
+    }, 300); // Debounce search
 
-  const currentList = searchQuery.trim() ? results : allClinics;
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Find a Doctor</h1>
         <p className="text-muted-foreground">
-          Search for doctors, clinics, and hospitals in Iloilo City.
+          Search for doctors, clinics, and hospitals by name or location in Iloilo City.
         </p>
       </div>
 
@@ -104,26 +96,22 @@ export default function FindDoctorPage() {
         <CardHeader>
           <CardTitle>Search Healthcare Providers</CardTitle>
           <CardDescription>
-            Enter a name, location, or address to filter the list below.
+            Enter a name or location to filter the list of providers below.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="flex w-full items-center space-x-2 mb-6">
+          <div className="flex w-full items-center space-x-2 mb-6">
             <div className="relative flex-grow">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="e.g., hospital near Jaro Cathedral"
+                placeholder="e.g., Jaro or Iloilo Doctors' Hospital"
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button type="submit">
-              {isSearching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Search
-            </Button>
-          </form>
+          </div>
 
           <div className="space-y-4">
             {isSearching ? (
@@ -131,14 +119,8 @@ export default function FindDoctorPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <p className="ml-4 text-muted-foreground">Searching...</p>
               </div>
-            ) : hasSearched && results.length === 0 ? (
-                 <div className="text-center py-10">
-                  <p className="text-muted-foreground">
-                    No results found for "{searchQuery}". Try a different search.
-                  </p>
-                </div>
-            ) : (
-                currentList.map((clinic, index) => (
+            ) : filteredResults.length > 0 ? (
+                filteredResults.map((clinic, index) => (
                   <div
                     key={index}
                     className="flex items-center justify-between rounded-md border p-4"
@@ -161,6 +143,12 @@ export default function FindDoctorPage() {
                     </Button>
                   </div>
                 ))
+            ) : (
+                 <div className="text-center py-10">
+                  <p className="text-muted-foreground">
+                    No results found for "{searchQuery}". Please try another location or name.
+                  </p>
+                </div>
             )}
           </div>
         </CardContent>
