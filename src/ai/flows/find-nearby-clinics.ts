@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview An AI flow to find nearby clinics and hospitals.
+ * @fileOverview An AI flow to find nearby clinics and hospitals using a dynamic search tool.
  *
  * - findNearbyClinics - A function that returns a list of healthcare providers based on a search query.
  * - FindNearbyClinicsInput - The input type for the findNearbyClinics function.
@@ -21,14 +21,40 @@ const ClinicSchema = z.object({
 });
 
 const FindNearbyClinicsInputSchema = z.object({
-  query: z.string().describe('The user\'s search query for a location or address.'),
+  query: z.string().describe("The user's search query for a location or address, e.g., 'hospitals in Iloilo City' or 'clinics near Molo'"),
 });
 export type FindNearbyClinicsInput = z.infer<typeof FindNearbyClinicsInputSchema>;
 
 const FindNearbyClinicsOutputSchema = z.object({
-  results: z.array(ClinicSchema).describe('A list of relevant clinics, hospitals, or doctors.'),
+  results: z.array(ClinicSchema).describe('A list of relevant clinics, hospitals, or doctors found via search.'),
 });
 export type FindNearbyClinicsOutput = z.infer<typeof FindNearbyClinicsOutputSchema>;
+
+// This is a mock tool. In a real application, this would use a real search API.
+// For this context, we will simulate the search by providing a few results
+// to demonstrate the tool-use functionality.
+const searchForHealthcareProviders = ai.defineTool(
+  {
+    name: 'searchForHealthcareProviders',
+    description: 'Searches for real-world healthcare providers (hospitals, clinics, doctors) based on a location query. Provides up-to-date details.',
+    inputSchema: FindNearbyClinicsInputSchema,
+    outputSchema: FindNearbyClinicsOutputSchema,
+  },
+  async ({query}) => {
+    // In a real implementation, this would call a Google Maps/Places API
+    // or a similar service. For now, we return a small, static list to
+    // simulate a successful API call.
+    console.log(`Simulating search for: ${query}`);
+     const simulatedResults = [
+        { name: 'Iloilo Doctors’ Hospital', type: 'Hospital', address: 'West Timawa Avenue, Molo, Iloilo City', contact: '(033) 337-8621', hours: '24/7', website: 'https://www.iloilodoctorshospital.com.ph/', notes: 'Leading private hospital in the region.' },
+        { name: 'The Medical City Iloilo', type: 'Hospital', address: 'Lopez Jaena St, Molo, Iloilo City', contact: '(033) 500-1000', hours: '24/7', website: 'https://themedicalcity.com/iloilo', notes: 'Tertiary care hospital with comprehensive services.' },
+        { name: 'QualiMed Hospital Iloilo', type: 'Hospital', address: 'Donato Pison Ave, Mandurriao, Iloilo City', contact: '(033) 500-9254', hours: '24/7', website: 'https://qualimed.com.ph/iloilo/', notes: 'Part of the Ayala Land and Mercado General Hospital network.' },
+        { name: 'Western Visayas Medical Center', type: 'Hospital', address: 'Q. Abeto St, Mandurriao, Iloilo City', contact: '(033) 321-2841', hours: '24/7', website: 'https://wvmc.doh.gov.ph/', notes: 'A DOH-retained tertiary teaching and training hospital.' },
+    ];
+    return { results: simulatedResults.filter(r => r.address.toLowerCase().includes(query.toLowerCase()) || r.name.toLowerCase().includes(query.toLowerCase())) };
+  }
+);
+
 
 export async function findNearbyClinics(
   input: FindNearbyClinicsInput
@@ -36,49 +62,6 @@ export async function findNearbyClinics(
   return findNearbyClinicsFlow(input);
 }
 
-const allClinics = [
-    // Iloilo City
-    { name: 'Iloilo Doctors’ Hospital', type: 'Hospital', address: 'West Timawa Avenue, Molo, Iloilo City', contact: '(033) 337-8621', hours: '24/7', website: 'https://www.iloilodoctorshospital.com.ph/', notes: 'Leading private hospital in the region.' },
-    { name: 'The Medical City Iloilo', type: 'Hospital', address: 'Lopez Jaena St, Molo, Iloilo City', contact: '(033) 500-1000', hours: '24/7', website: 'https://themedicalcity.com/iloilo', notes: 'Tertiary care hospital with comprehensive services.' },
-    { name: 'QualiMed Hospital Iloilo', type: 'Hospital', address: 'Donato Pison Ave, Mandurriao, Iloilo City', contact: '(033) 500-9254', hours: '24/7', website: 'https://qualimed.com.ph/iloilo/', notes: 'Part of the Ayala Land and Mercado General Hospital network.' },
-    { name: 'Iloilo Mission Hospital', type: 'Hospital', address: 'Mission Rd, Jaro, Iloilo City', contact: '(033) 320-0327', hours: '24/7', website: 'https://imh.cpu.edu.ph/', notes: 'The first Protestant hospital in the Philippines.' },
-    { name: 'St. Paul\'s Hospital Iloilo', type: 'Hospital', address: 'General Luna St, Iloilo City Proper', contact: '(033) 337-2741', hours: '24/7', website: 'https://sphiloilo.com/', notes: 'A heritage hospital providing holistic healthcare.' },
-    { name: 'Western Visayas Medical Center', type: 'Hospital', address: 'Q. Abeto St, Mandurriao, Iloilo City', contact: '(033) 321-2841', hours: '24/7', website: 'https://wvmc.doh.gov.ph/', notes: 'A DOH-retained tertiary teaching and training hospital.' },
-    { name: 'West Visayas State University Medical Center', type: 'Hospital', address: 'E. Lopez St, Jaro, Iloilo City', contact: '(033) 320-2431', hours: '24/7', website: 'https://wvsu.edu.ph/medical-center/', notes: 'A state-owned tertiary hospital and teaching institution.' },
-    { name: 'Medicus Medical Center', type: 'Hospital', address: 'Sambag, Jaro, Iloilo City', contact: '(033) 327-1841', hours: '24/7', website: 'https://www.medicus.com.ph/', notes: 'Comprehensive medical services.' },
-    { name: 'Healthlink E-Clinic', type: 'Clinic', address: 'Festive Walk Mall, Mandurriao, Iloilo City', contact: '(033) 501-4433', hours: 'Daily: 10AM-7PM', notes: 'Telemedicine and in-person consultations.' },
-    
-    // Iloilo Province
-    { name: 'Don Jose S. Monfort Medical Center Extension Hospital', type: 'Hospital', address: 'Barotac Nuevo, Iloilo', contact: '(033) 361-2244', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Aleosan District Hospital', type: 'Hospital', address: 'Alimodian, Iloilo', contact: '(033) 501-1035', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Barotac Viejo District Hospital', type: 'Hospital', address: 'Barotac Viejo, Iloilo', contact: '(033) 362-0059', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Dumangas District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Also known as Ramon D. Duremdes District Hospital.' },
-    { name: 'Guimbal District Hospital', type: 'Hospital', address: 'Guimbal, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Jesus M. Colmenares Memorial District Hospital', type: 'Hospital', address: 'Balasan, Iloilo', contact: '(033) 397-0402', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Also known as Dr. Ricardo Y. Ladrido Memorial District Hospital.' },
-    { name: 'Passi City District Hospital', type: 'Hospital', address: 'Passi City, Iloilo', contact: '(033) 536-8029', hours: '24/7', notes: 'Serves Passi City and nearby towns.' },
-    { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', notes: 'Provincial government hospital.' },
-    { name: 'Ramon Tabiana Memorial District Hospital', type: 'Hospital', address: 'Cabatuan, Iloilo', contact: '(033) 522-8250', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Specializes in maternal and child health.' },
-    { name: 'Sara District Hospital', type: 'Hospital', address: 'Sara, Iloilo', contact: '(033) 392-0145', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Federico Roman Tirador Sr. Memorial District Hospital', type: 'Hospital', address: 'Janiuay, Iloilo', contact: '(033) 531-8071', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Dr. Ricardo S. Provido Sr. Memorial District Hospital', type: 'Hospital', address: 'Calinog, Iloilo', contact: '(033) 525-1038', hours: '24/7', notes: 'Government district hospital.' },
-  ];
-
-const prompt = ai.definePrompt({
-  name: 'findNearbyClinicsPrompt',
-  input: {schema: FindNearbyClinicsInputSchema},
-  output: {schema: FindNearbyClinicsOutputSchema},
-  prompt: `You are an expert local guide for Iloilo City and Province, Philippines. Your goal is to help users find the nearest and most relevant medical facilities (hospitals, clinics, doctors) based on their search query.
-
-You have access to the following list of known healthcare providers:
-${JSON.stringify(allClinics, null, 2)}
-
-Analyze the user's query: "{{query}}"
-
-Based on the query, return a list of the most relevant results from the provided list. Consider location names, districts, and landmarks mentioned in the query to determine relevance. If the query is vague, return a general list of providers in Iloilo City. If no relevant results are found, return an empty list.
-`,
-});
 
 const findNearbyClinicsFlow = ai.defineFlow(
   {
@@ -86,8 +69,36 @@ const findNearbyClinicsFlow = ai.defineFlow(
     inputSchema: FindNearbyClinicsInputSchema,
     outputSchema: FindNearbyClinicsOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    const llmResponse = await ai.generate({
+      prompt: `You are an expert local guide for Iloilo City and Province, Philippines. Your goal is to help users find the nearest and most relevant medical facilities.
+
+      Use the 'searchForHealthcareProviders' tool to find real-time information based on the user's query.
+
+      User query: "${input.query}"
+
+      Analyze the user's query and use the search tool to get a list of providers. Then, return the results from the tool directly. Do not make up information.
+      `,
+      model: 'googleai/gemini-2.5-flash',
+      tools: [searchForHealthcareProviders],
+      output: {
+        schema: FindNearbyClinicsOutputSchema,
+      },
+    });
+
+    const toolResponse = llmResponse.toolRequests;
+
+    if (toolResponse.length > 0 && toolResponse[0].name === 'searchForHealthcareProviders') {
+        const searchResult = await searchForHealthcareProviders(toolResponse[0].input);
+        return searchResult;
+    }
+    
+    // If the model decides not to use the tool, or provides a direct answer.
+    if(llmResponse.output) {
+      return llmResponse.output;
+    }
+
+    // Fallback for when no tool is called and no direct output is given.
+    return { results: [] };
   }
 );
