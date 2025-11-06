@@ -38,35 +38,31 @@ export async function findNearbyClinics(
 
 const allClinics = [
     // Iloilo City
-    { name: 'Iloilo Doctors’ Hospital', type: 'Hospital', address: 'West Timawa Avenue, Molo, Iloilo City', contact: '(033) 337-8621', hours: '24/7', website: 'http://www.iloilodoctorshospital.com.ph/', notes: 'Leading private hospital in the region.' },
-    { name: 'The Medical City Iloilo', type: 'Hospital', address: 'Lopez Jaena St, Molo, Iloilo City', contact: '(033) 500-1000', hours: '24/7', website: 'https://www.themedicalcity.com/iloilo', notes: 'Tertiary care hospital with comprehensive services.' },
+    { name: 'Iloilo Doctors’ Hospital', type: 'Hospital', address: 'West Timawa Avenue, Molo, Iloilo City', contact: '(033) 337-8621', hours: '24/7', website: 'https://www.iloilodoctorshospital.com.ph/', notes: 'Leading private hospital in the region.' },
+    { name: 'The Medical City Iloilo', type: 'Hospital', address: 'Lopez Jaena St, Molo, Iloilo City', contact: '(033) 500-1000', hours: '24/7', website: 'https://themedicalcity.com/iloilo', notes: 'Tertiary care hospital with comprehensive services.' },
     { name: 'QualiMed Hospital Iloilo', type: 'Hospital', address: 'Donato Pison Ave, Mandurriao, Iloilo City', contact: '(033) 500-9254', hours: '24/7', website: 'https://qualimed.com.ph/iloilo/', notes: 'Part of the Ayala Land and Mercado General Hospital network.' },
     { name: 'Iloilo Mission Hospital', type: 'Hospital', address: 'Mission Rd, Jaro, Iloilo City', contact: '(033) 320-0327', hours: '24/7', website: 'https://imh.cpu.edu.ph/', notes: 'The first Protestant hospital in the Philippines.' },
     { name: 'St. Paul\'s Hospital Iloilo', type: 'Hospital', address: 'General Luna St, Iloilo City Proper', contact: '(033) 337-2741', hours: '24/7', website: 'https://sphiloilo.com/', notes: 'A heritage hospital providing holistic healthcare.' },
     { name: 'Western Visayas Medical Center', type: 'Hospital', address: 'Q. Abeto St, Mandurriao, Iloilo City', contact: '(033) 321-2841', hours: '24/7', website: 'https://wvmc.doh.gov.ph/', notes: 'A DOH-retained tertiary teaching and training hospital.' },
     { name: 'West Visayas State University Medical Center', type: 'Hospital', address: 'E. Lopez St, Jaro, Iloilo City', contact: '(033) 320-2431', hours: '24/7', website: 'https://wvsu.edu.ph/medical-center/', notes: 'A state-owned tertiary hospital and teaching institution.' },
-    { name: 'Medicus Medical Center', type: 'Hospital', address: 'Mandurriao, Iloilo City', contact: '(033) 321-7821', hours: '24/7', website: 'https://www.medicus.com.ph/', notes: 'Comprehensive medical services.' },
-    { name: 'MedicPro Medical Clinic', type: 'Clinic', address: 'La Paz, Iloilo City', contact: '(033) 320-5678', hours: 'Mon-Fri: 8AM-6PM', notes: 'General consultation and laboratory services.' },
+    { name: 'Medicus Medical Center', type: 'Hospital', address: 'Sambag, Jaro, Iloilo City', contact: '(033) 327-1841', hours: '24/7', website: 'https://www.medicus.com.ph/', notes: 'Comprehensive medical services.' },
     { name: 'Healthlink E-Clinic', type: 'Clinic', address: 'Festive Walk Mall, Mandurriao, Iloilo City', contact: '(033) 501-4433', hours: 'Daily: 10AM-7PM', notes: 'Telemedicine and in-person consultations.' },
     
     // Iloilo Province
     { name: 'Don Jose S. Monfort Medical Center Extension Hospital', type: 'Hospital', address: 'Barotac Nuevo, Iloilo', contact: '(033) 361-2244', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'Aleosan District Hospital', type: 'Hospital', address: 'Alimodian, Iloilo', contact: '(033) 501-1035', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'Barotac Viejo District Hospital', type: 'Hospital', address: 'Barotac Viejo, Iloilo', contact: '(033) 362-0059', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Dumangas District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Government district hospital.' },
+    { name: 'Dumangas District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Also known as Ramon D. Duremdes District Hospital.' },
     { name: 'Guimbal District Hospital', type: 'Hospital', address: 'Guimbal, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'Jesus M. Colmenares Memorial District Hospital', type: 'Hospital', address: 'Balasan, Iloilo', contact: '(033) 397-0402', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Government district hospital.' },
+    { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Also known as Dr. Ricardo Y. Ladrido Memorial District Hospital.' },
     { name: 'Passi City District Hospital', type: 'Hospital', address: 'Passi City, Iloilo', contact: '(033) 536-8029', hours: '24/7', notes: 'Serves Passi City and nearby towns.' },
-    { name: 'Pototan District Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Ramon D. Duremdes District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Government district hospital.' },
+    { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', notes: 'Provincial government hospital.' },
     { name: 'Ramon Tabiana Memorial District Hospital', type: 'Hospital', address: 'Cabatuan, Iloilo', contact: '(033) 522-8250', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Specializes in maternal and child health.' },
     { name: 'Sara District Hospital', type: 'Hospital', address: 'Sara, Iloilo', contact: '(033) 392-0145', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'Federico Roman Tirador Sr. Memorial District Hospital', type: 'Hospital', address: 'Janiuay, Iloilo', contact: '(033) 531-8071', hours: '24/7', notes: 'Government district hospital.' },
     { name: 'Dr. Ricardo S. Provido Sr. Memorial District Hospital', type: 'Hospital', address: 'Calinog, Iloilo', contact: '(033) 525-1038', hours: '24/7', notes: 'Government district hospital.' },
-    { name: 'Dr. Ricardo Y. Ladrido Memorial District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Also known as Lambunao District Hospital.' },
-    { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', notes: 'Provincial government hospital.' },
   ];
 
 const prompt = ai.definePrompt({
@@ -95,5 +91,3 @@ const findNearbyClinicsFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
