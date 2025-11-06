@@ -16,6 +16,8 @@ import { useUser } from '@/firebase';
 import { useEffect, useState } from 'react';
 import { runFindNearbyClinics } from '@/app/actions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { HealthTipCard } from '@/components/anemo/HealthTipCard';
+
 
 type Clinic = {
   name: string;
@@ -78,57 +80,62 @@ export default function DashboardPage() {
           </Button>
         </div>
       </div>
+      
+      <div className="grid gap-8 md:grid-cols-2">
+        <HealthTipCard />
 
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Nearby Healthcare Providers</CardTitle>
-          <CardDescription>
-            A quick look at some of the available doctors, hospitals, and clinics in Iloilo City.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {isLoading ? (
-               Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="flex items-center justify-between rounded-md border p-4">
-                  <div className="flex items-center gap-4">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-48" />
-                      <Skeleton className="h-4 w-64" />
+        <Card>
+          <CardHeader>
+            <CardTitle>Nearby Healthcare Providers</CardTitle>
+            <CardDescription>
+              A quick look at some of the available doctors, hospitals, and clinics in Iloilo City.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="flex items-center justify-between rounded-md border p-4">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-4 w-64" />
+                      </div>
                     </div>
+                    <Skeleton className="h-8 w-16" />
                   </div>
-                  <Skeleton className="h-8 w-16" />
-                </div>
-              ))
-            ) : (
-              clinics.slice(0, 3).map((clinic, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between rounded-md border p-4"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-secondary">
-                        {clinic.icon}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">{clinic.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {clinic.address}
-                      </p>
+                ))
+              ) : (
+                clinics.slice(0, 3).map((clinic, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-md border p-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-secondary">
+                          {clinic.icon}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{clinic.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {clinic.address}
+                        </p>
+                      </div>
                     </div>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href="/dashboard/find-doctor">View</Link>
+                    </Button>
                   </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/dashboard/find-doctor">View</Link>
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <ChatbotPopup />
     </div>
   );
