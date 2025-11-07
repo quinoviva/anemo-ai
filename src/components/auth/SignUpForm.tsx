@@ -41,11 +41,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth, useFirestore } from '@/firebase';
 import { Loader2, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { iloiloMunicipalities } from '@/lib/iloilo-municipalities';
+import { ScrollArea } from '../ui/scroll-area';
 
 const formSchema = z
   .object({
     firstName: z.string().min(1, { message: 'First name is required.' }),
     lastName: z.string().min(1, { message: 'Last name is required.' }),
+    municipality: z.string({ required_error: 'Please select a municipality.' }),
     sex: z.string({ required_error: 'Please select an option.' }),
     email: z.string().email({ message: 'Please enter a valid email.' }),
     password: z
@@ -82,6 +85,7 @@ export function SignUpForm() {
     defaultValues: {
       firstName: '',
       lastName: '',
+      municipality: '',
       sex: '',
       email: '',
       password: '',
@@ -110,6 +114,7 @@ export function SignUpForm() {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
+        address: values.municipality,
         medicalInfo: {
             sex: values.sex,
         }
@@ -172,6 +177,32 @@ export function SignUpForm() {
                 )}
               />
             </div>
+             <FormField
+                control={form.control}
+                name="municipality"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Municipality</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your municipality" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <ScrollArea className='h-72'>
+                           {iloiloMunicipalities.map((municipality) => (
+                            <SelectItem key={municipality} value={municipality}>
+                                {municipality}
+                            </SelectItem>
+                           ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
              <FormField
                   control={form.control}
                   name="sex"
