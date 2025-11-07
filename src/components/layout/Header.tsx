@@ -28,9 +28,6 @@ const navLinks = [
   { href: '/dashboard', label: 'Home', icon: HeartPulse },
   { href: '/dashboard/analysis', label: 'Analysis', icon: Stethoscope },
   { href: '/dashboard/history', label: 'Track', icon: History },
-  { href: '/dashboard/chatbot', label: 'ChatbotAI', icon: Bot },
-  { href: '/dashboard/live-analysis', label: 'Live Analysis', icon: Video },
-  { href: '/dashboard/find-doctor', label: 'Nearby Providers', icon: Search },
 ];
 
 export function Header() {
@@ -115,7 +112,38 @@ export function Header() {
                   {label}
                 </Link>
               ))}
-               <Link
+              <div className="border-t pt-4 mt-auto space-y-4">
+                 <Link
+                  href="/dashboard/chatbot"
+                  className={cn(
+                    'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
+                    { 'bg-muted text-foreground': pathname === '/dashboard/chatbot' }
+                  )}
+                >
+                  <Bot className="h-5 w-5" />
+                  ChatbotAI
+                </Link>
+                 <Link
+                  href="/dashboard/live-analysis"
+                  className={cn(
+                    'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
+                    { 'bg-muted text-foreground': pathname === '/dashboard/live-analysis' }
+                  )}
+                >
+                  <Video className="h-5 w-5" />
+                  Live Analysis
+                </Link>
+                 <Link
+                  href="/dashboard/find-doctor"
+                  className={cn(
+                    'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
+                    { 'bg-muted text-foreground': pathname === '/dashboard/find-doctor' }
+                  )}
+                >
+                  <Search className="h-5 w-5" />
+                  Nearby Providers
+                </Link>
+                <Link
                   href="/dashboard/settings"
                   className={cn(
                     'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
@@ -125,6 +153,7 @@ export function Header() {
                   <Cog className="h-5 w-5" />
                   Settings
                 </Link>
+              </div>
             </nav>
           </SheetContent>
         </Sheet>
@@ -148,33 +177,18 @@ export function Header() {
       </div>
 
       <nav className="hidden flex-grow items-center justify-center gap-5 text-sm font-medium md:flex lg:gap-6">
-        <Link
-          href={'/dashboard'}
-          className={cn(
-            'transition-colors hover:text-foreground',
-            pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'
-          )}
-        >
-          Home
-        </Link>
-        <Link
-          href={'/dashboard/analysis'}
-          className={cn(
-            'transition-colors hover:text-foreground',
-            pathname === '/dashboard/analysis' ? 'text-foreground' : 'text-muted-foreground'
-          )}
-        >
-          Analysis
-        </Link>
-        <Link
-          href={'/dashboard/history'}
-          className={cn(
-            'transition-colors hover:text-foreground',
-            pathname === '/dashboard/history' ? 'text-foreground' : 'text-muted-foreground'
-          )}
-        >
-          Track
-        </Link>
+        {navLinks.map(({ href, label }) => (
+            <Link
+            key={href}
+            href={href}
+            className={cn(
+                'transition-colors hover:text-foreground',
+                pathname === href ? 'text-foreground' : 'text-muted-foreground'
+            )}
+            >
+            {label}
+            </Link>
+        ))}
       </nav>
 
       <div className="flex items-center gap-4">
