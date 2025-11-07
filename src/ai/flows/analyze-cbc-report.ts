@@ -24,24 +24,25 @@ const prompt = ai.definePrompt({
   name: 'analyzeCbcReportPrompt',
   input: { schema: AnalyzeCbcReportInputSchema },
   output: { schema: AnalyzeCbcReportOutputSchema },
-  prompt: `You are an expert at reading Complete Blood Count (CBC) lab reports using Optical Character Recognition (OCR). Your task is to analyze the provided image of a lab report and extract key information.
+  prompt: `You are an expert at reading Complete Blood Count (CBC) lab reports using Optical Character Recognition (OCR). Your task is to analyze the provided image, extract key information, and provide a clear interpretation.
 
   **Instructions:**
 
-  1.  **Scan the Image:** Analyze the image provided to identify text and values from the CBC report.
-  2.  **Extract Key Parameters:** Focus on extracting the following key parameters. If they are not present, omit them from the result.
+  1.  **Scan the Image:** Analyze the image to identify text and values from the CBC report.
+  2.  **Extract Key Parameters:** Focus on extracting the following key parameters. If not present, omit them.
       - Hemoglobin (HGB or Hb)
       - Hematocrit (HCT)
       - Red Blood Cell (RBC) count
       - Mean Corpuscular Volume (MCV)
       - Mean Corpuscular Hemoglobin (MCH)
-  3.  **Populate the Data:** For each parameter you find, extract its value, unit, and the reference range provided on the report. Determine if the value is within the normal range and set the 'isNormal' flag accordingly.
-  4.  **Generate a Summary:** Based on your analysis, create a concise, one-sentence summary.
-      - If Hemoglobin or Hematocrit levels are below the normal range, the summary should be something like: "Hemoglobin level appears below normal, suggesting possible anemia."
-      - If all key parameters are within their normal ranges, the summary should be: "All key CBC values appear to be within the normal range."
-      - If the image is not a valid lab report, the summary should state: "The uploaded image does not appear to be a valid CBC lab report." and the parameters array should be empty.
+  3.  **Populate Data:** For each parameter, extract its value, unit, and reference range. Determine if the value is normal and set 'isNormal'.
+  4.  **Generate Summary:** Create a concise, one-sentence summary.
+      - If Hemoglobin/Hematocrit are low: "Hemoglobin level appears below normal, suggesting possible anemia."
+      - If all key values are normal: "All key CBC values appear to be within the normal range."
+      - If not a valid report: "The uploaded image does not appear to be a valid CBC lab report." and clear the parameters array.
+  5.  **Generate Interpretation:** Provide a detailed, easy-to-understand interpretation in the 'interpretation' field. Explain what the key out-of-range values (like low Hemoglobin or HCT) mean in simple terms. If results suggest anemia, explain that it is a condition where the blood lacks healthy red blood cells and that a doctor should be consulted for diagnosis. If all values are normal, state that the key indicators for anemia are within the expected range. This should be a few sentences long.
 
-  **Crucially, do not add any medical advice or interpretation beyond stating whether the values are within the provided normal range and generating the required summary.**
+  **Crucially, do not add any medical advice or diagnosis. Emphasize that this is an AI interpretation and a healthcare professional must be consulted.**
 
   Image of the lab report: {{media url=photoDataUri}}`,
 });

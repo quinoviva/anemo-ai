@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Loader2, XCircle, Sparkles, Upload, Send, FileUp } from 'lucide-react';
+import { Loader2, XCircle, Sparkles, Upload, Send, FileUp, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { runAnalyzeCbcReport } from '@/app/actions';
 import { useUser, useFirestore } from '@/firebase';
@@ -212,6 +212,15 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
             <AlertTitle>Summary</AlertTitle>
             <AlertDescription>{analysisResult.summary}</AlertDescription>
           </Alert>
+
+          {analysisResult.interpretation && (
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>AI Interpretation</AlertTitle>
+                <AlertDescription>{analysisResult.interpretation}</AlertDescription>
+              </Alert>
+          )}
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -262,7 +271,7 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         {renderContent()}
       </DialogContent>
     </Dialog>
