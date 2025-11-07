@@ -25,6 +25,11 @@ import {
   FindNearbyClinicsInput,
   FindNearbyClinicsOutput,
 } from '@/ai/flows/find-nearby-clinics';
+import {
+  analyzeCbcReport,
+  AnalyzeCbcReportInput,
+  AnalyzeCbcReportOutput,
+} from '@/ai/flows/analyze-cbc-report';
 
 
 export async function runGenerateImageDescription(
@@ -55,4 +60,10 @@ export async function runFindNearbyClinics(
   input: FindNearbyClinicsInput
 ): Promise<FindNearbyClinicsOutput> {
   return await findNearbyClinics(input);
+}
+
+export async function runAnalyzeCbcReport(
+  input: AnalyzeCbcReportInput
+): Promise<AnalyzeCbcReportOutput> {
+  return await analyzeCbcReport(input);
 }

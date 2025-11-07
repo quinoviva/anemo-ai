@@ -99,6 +99,56 @@
         "lastName",
         "email"
       ]
+    },
+    "LabReport": {
+      "title": "Lab Report",
+      "type": "object",
+      "description": "Represents a scanned CBC lab report analysis.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the lab report."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns this report."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the report was created."
+        },
+        "summary": {
+          "type": "string",
+          "description": "AI-generated summary of the lab results."
+        },
+        "parameters": {
+          "type": "array",
+          "description": "Array of analyzed blood parameters.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameter": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "range": {
+                "type": "string"
+              },
+              "isNormal": {
+                "type": "boolean"
+              }
+            },
+            "required": ["parameter", "value", "unit", "isNormal"]
+          }
+        }
+      },
+      "required": ["id", "userId", "createdAt", "summary", "parameters"]
     }
   },
   "auth": {
@@ -122,6 +172,26 @@
             {
               "name": "userId",
               "description": "The unique identifier of the user, matching the Firebase Auth UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/labReports/{reportId}",
+        "definition": {
+          "entityName": "LabReport",
+          "schema": {
+            "$ref": "#/backend/entities/LabReport"
+          },
+          "description": "Stores analyzed CBC lab reports for a user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, matching the Firebase Auth UID."
+            },
+            {
+              "name": "reportId",
+              "description": "The unique identifier for the lab report."
             }
           ]
         }
