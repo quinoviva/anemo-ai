@@ -251,7 +251,7 @@ export function SignUpForm() {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <div className="relative">
@@ -267,9 +267,16 @@ export function SignUpForm() {
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
-                  <FormDescription>
-                    Must be at least 8 characters and include uppercase, lowercase, number, and special characters.
-                  </FormDescription>
+                  {!fieldState.error && field.value && (
+                    <FormDescription>
+                       Your password is secure.
+                    </FormDescription>
+                  )}
+                  {fieldState.error && (
+                    <FormDescription>
+                      Must be at least 8 characters and include uppercase, lowercase, number, and special characters.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
