@@ -138,15 +138,16 @@ export function DiagnosticInterview({ imageDescription, onReset, onAnalysisError
 
   if (interviewStep === 'form') {
     return (
-        <Card className="flex-1 flex flex-col">
+        <Card className="flex-1 flex flex-col max-h-full">
           <CardHeader>
               <CardTitle className="flex items-center gap-2"><Bot /> Diagnostic Questionnaire</CardTitle>
               <CardDescription>Please answer the following questions to help us build your health profile.</CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-            <CardContent className="flex-1 overflow-y-auto space-y-6">
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
+            <CardContent className="flex-1 overflow-y-auto space-y-6 p-4">
+               <ScrollArea className="h-full pr-4">
                 {questions.map((q, index) => (
-                    <div key={index} className="grid gap-3 p-4 border rounded-lg">
+                    <div key={index} className="grid gap-3 p-4 border rounded-lg mb-4">
                         <Label htmlFor={`question-${index}`} className="text-base">{q}</Label>
                         <RadioGroup
                             defaultValue={answers[q]}
@@ -164,6 +165,7 @@ export function DiagnosticInterview({ imageDescription, onReset, onAnalysisError
                         </RadioGroup>
                     </div>
                 ))}
+               </ScrollArea>
             </CardContent>
             <CardFooter>
               <Button type="submit" disabled={isLoading || !isFormComplete()}>
