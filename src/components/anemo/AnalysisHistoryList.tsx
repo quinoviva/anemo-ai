@@ -11,74 +11,84 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Eye, Download, FileText, Plus, LogIn, User } from 'lucide-react';
+import { Eye, Download, FileText, Plus, LogIn, User, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useUser } from '@/firebase';
-
-
-// Mock data is removed to reflect a new user's empty state.
-// In a real implementation, this would be fetched from a database.
-const history: any[] = [
-  // { id: 'ANL-001', date: '2024-07-28', riskScore: 65, status: 'High Risk' },
-];
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
+import { format } from 'date-fns';
 
 export function AnalysisHistoryList() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const isGuest = user?.isAnonymous;
 
-  const getBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'High Risk':
-        return 'destructive';
-      case 'Moderate Risk':
-        return 'secondary';
-      default:
-        return 'default';
+  const labReportsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(
+      collection(firestore, `users/${user.uid}/labReports`),
+      orderBy('createdAt', 'desc')
+    );
+  }, [user, firestore]);
+
+  const { data: history, isLoading } = useCollection<any>(labReportsQuery);
+
+  const getBadgeVariant = (summary: string) => {
+    if (summary.toLowerCase().includes('anemia')) {
+      return 'destructive';
     }
+    return 'default';
   };
 
   if (isGuest) {
-     return (
-        <Card className="text-center">
-            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-                 <div className="p-4 bg-primary/10 rounded-full">
-                    <User className="h-10 w-10 text-primary" />
-                 </div>
-                <h3 className="text-xl font-semibold">History Not Saved in Guest Mode</h3>
-                <p className="text-muted-foreground">
-                    To save and review your analysis history, please create an account.
-                </p>
-                <Button asChild className="mt-2">
-                    <Link href="/signup">
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Sign Up Now
-                    </Link>
-                </Button>
-            </CardContent>
-        </Card>
-    )
+    return (
+      <Card className="text-center">
+        <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+          <div className="p-4 bg-primary/10 rounded-full">
+            <User className="h-10 w-10 text-primary" />
+          </div>
+          <h3 className="text-xl font-semibold">History Not Saved in Guest Mode</h3>
+          <p className="text-muted-foreground">
+            To save and review your analysis history, please create an account.
+          </p>
+          <Button asChild className="mt-2">
+            <Link href="/signup">
+              <LogIn className="mr-2 h-4 w-4" />
+              Sign Up Now
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
-  if (history.length === 0) {
+  if (isLoading) {
     return (
-        <Card className="text-center">
-            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-                 <div className="p-4 bg-primary/10 rounded-full">
-                    <FileText className="h-10 w-10 text-primary" />
-                 </div>
-                <h3 className="text-xl font-semibold">No History Found</h3>
-                <p className="text-muted-foreground">
-                    You haven't performed any analysis yet. Start your first analysis to see your reports here.
-                </p>
-                <Button asChild className="mt-2">
-                    <Link href="/dashboard/analysis">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Start New Analysis
-                    </Link>
-                </Button>
-            </CardContent>
-        </Card>
-    )
+      <div className="flex h-full w-full items-center justify-center p-10">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!history || history.length === 0) {
+    return (
+      <Card className="text-center">
+        <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+          <div className="p-4 bg-primary/10 rounded-full">
+            <FileText className="h-10 w-10 text-primary" />
+          </div>
+          <h3 className="text-xl font-semibold">No History Found</h3>
+          <p className="text-muted-foreground">
+            You haven't performed any analysis yet. Upload a lab report to see your history here.
+          </p>
+          <Button asChild className="mt-2">
+            <Link href="/dashboard/history">
+              <Plus className="mr-2 h-4 w-4" />
+              Upload Lab Report
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -89,19 +99,17 @@ export function AnalysisHistoryList() {
             <TableRow>
               <TableHead>Analysis ID</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Risk Score</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Summary</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {history.map((item) => (
               <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.id}</TableCell>
-                <TableCell>{item.date}</TableCell>
-                <TableCell>{item.riskScore}/100</TableCell>
+                <TableCell className="font-medium">{item.id.substring(0, 8)}...</TableCell>
+                <TableCell>{item.createdAt ? format(item.createdAt.toDate(), 'PPP') : 'N/A'}</TableCell>
                 <TableCell>
-                  <Badge variant={getBadgeVariant(item.status)}>{item.status}</Badge>
+                   <Badge variant={getBadgeVariant(item.summary)}>{item.summary}</Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="icon">
