@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/firebase';
 import { Bot, User, Send, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,13 +25,19 @@ const sampleQuestions = [
 ];
 
 export function Chatbot({ isPopup = false }: ChatbotProps) {
-  const [history, setHistory] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I am ChatbotAI. How can I help you with your questions about anemia?" },
-  ]);
+  const { user } = useUser();
+  const [history, setHistory] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const userName = user?.displayName?.split(' ')[0] || 'there';
+    setHistory([
+      { role: 'assistant', content: `Hello ${userName}! I am ANEMO BOT. How can I help you with your questions about anemia?` },
+    ]);
+  }, [user]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -89,7 +96,7 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
     <CardHeader className="border-b">
       <CardTitle className="flex items-center gap-2 text-lg">
         <Bot className="h-6 w-6 text-primary" />
-        ChatbotAI
+        ANEMO BOT
       </CardTitle>
       {isPopup && (
         <CardDescription className="text-xs">
@@ -99,12 +106,20 @@ export function Chatbot({ isPopup = false }: ChatbotProps) {
     </CardHeader>
   )
 
+  if (history.length === 0) {
+    return (
+        <Card className={cn("h-full flex flex-col items-center justify-center", isPopup ? "border-0 shadow-none" : "")}>
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </Card>
+    );
+  }
+
   return (
     <Card className={cn("h-full flex flex-col", isPopup ? "border-0 shadow-none" : "")}>
       {!isPopup ? (
          <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            ChatbotAI
+            ANEMO BOT
           </CardTitle>
             <CardDescription>
               Ask me anything about anemia.
