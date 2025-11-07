@@ -48,6 +48,8 @@ export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const isSigningIn = isLoading || isGoogleLoading || isGuestLoading;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -153,7 +155,7 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading || isGuestLoading}>
+            <Button type="submit" className="w-full" disabled={isSigningIn}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Log in
             </Button>
@@ -185,7 +187,7 @@ export function LoginForm() {
                 variant="outline"
                 className="w-full"
                 onClick={handleGoogleSignIn}
-                disabled={isLoading || isGoogleLoading || isGuestLoading}
+                disabled={isSigningIn}
             >
                 {isGoogleLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -211,7 +213,7 @@ export function LoginForm() {
                     variant="secondary"
                     className="w-full"
                     onClick={handleGuestSignIn}
-                    disabled={isLoading || isGoogleLoading || isGuestLoading}
+                    disabled={isSigningIn}
                     >
                     {isGuestLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

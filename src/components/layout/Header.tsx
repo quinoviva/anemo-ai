@@ -40,6 +40,8 @@ export function Header() {
   const { setTheme } = useTheme();
   const [, setForceRender] = useState(0);
 
+  const isGuest = auth.currentUser?.isAnonymous;
+
   useEffect(() => {
     const handleProfileUpdate = () => {
       setForceRender(Math.random());
@@ -60,6 +62,7 @@ export function Header() {
   };
 
   const getInitials = (name: string | null | undefined) => {
+    if (isGuest) return 'G';
     if (!name) return 'U';
     const names = name.split(' ');
     if (names.length > 1 && names[1]) {
@@ -194,15 +197,21 @@ export function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
-              <p className="font-medium">
-                {auth?.currentUser?.displayName || 'Guest'}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {auth?.currentUser?.email || 'No email provided'}
-              </p>
+              {isGuest ? (
+                <p className="font-medium">Guest Mode</p>
+              ) : (
+                <>
+                  <p className="font-medium">
+                    {auth?.currentUser?.displayName || 'User'}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {auth?.currentUser?.email || 'No email provided'}
+                  </p>
+                </>
+              )}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
+            <DropdownMenuItem onClick={() => router.push('/dashboard/profile')} disabled={isGuest}>
               Profile
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/dashboard/settings')}>

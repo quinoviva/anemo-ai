@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { updateProfile } from 'firebase/auth';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import Link from 'next/link';
 
 import { useUser, useFirestore, useAuth } from '@/firebase';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -44,7 +45,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, CalendarIcon } from 'lucide-react';
+import { Loader2, Upload, CalendarIcon, User, LogIn } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cn } from '@/lib/utils';
 import { format } from "date-fns"
@@ -78,6 +79,8 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
+  const isGuest = user?.isAnonymous;
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -98,7 +101,7 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (user && firestore && !initialDataLoaded) {
+    if (user && firestore && !initialDataLoaded && !isGuest) {
       const fetchUserData = async () => {
         const userDocRef = doc(firestore, 'users', user.uid);
         const docSnap = await getDoc(userDocRef);
@@ -132,8 +135,10 @@ export default function ProfilePage() {
         setInitialDataLoaded(true);
       };
       fetchUserData();
+    } else if (isGuest) {
+        setInitialDataLoaded(true);
     }
-  }, [user, firestore, form, initialDataLoaded]);
+  }, [user, firestore, form, initialDataLoaded, isGuest]);
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -168,7 +173,7 @@ export default function ProfilePage() {
   };
 
   const onSubmit = async (data: ProfileFormValues) => {
-    if (!user || !auth.currentUser) return;
+    if (!user || !auth.currentUser || isGuest) return;
     setIsLoading(true);
 
     try {
@@ -228,6 +233,28 @@ export default function ProfilePage() {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (isGuest) {
+    return (
+        <Card className="text-center">
+            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+                 <div className="p-4 bg-primary/10 rounded-full">
+                    <User className="h-10 w-10 text-primary" />
+                 </div>
+                <h3 className="text-xl font-semibold">Profile Not Available in Guest Mode</h3>
+                <p className="text-muted-foreground">
+                    To save your profile and medical history, please create an account.
+                </p>
+                <Button asChild className="mt-2">
+                    <Link href="/signup">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Sign Up Now
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
+    )
   }
 
   return (
