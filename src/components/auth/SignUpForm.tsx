@@ -184,10 +184,10 @@ export function SignUpForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Municipality</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select your municipality" />
+                          <SelectValue placeholder="Select municipality" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
