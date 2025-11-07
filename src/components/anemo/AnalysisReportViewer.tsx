@@ -155,11 +155,10 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
             </div>
             <div className="text-right">
                 <p className='font-bold text-lg'>{user?.displayName || 'N/A'}</p>
-                <p className='text-xs text-muted-foreground'>Generated On: {format(new Date(), 'PPP')}</p>
             </div>
         </div>
         <p className="text-sm text-muted-foreground">
-            From: <span className="font-medium text-foreground">{report.hospitalName || 'N/A'}</span> | <a href="https://anemocheck.com" className="hover:underline">anemocheck.com</a>
+            <span className="font-medium text-foreground">{report.hospitalName || 'N/A'}</span>
         </p>
       </header>
 
@@ -182,7 +181,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
                 <TableRow key={i}>
                 <TableCell className="font-medium">{p.parameter}</TableCell>
                 <TableCell>{p.value} {p.unit}</TableCell>
-                <TableCell>
+                <TableCell className="flex items-center justify-start">
                   <p className={p.isNormal ? 'text-primary font-semibold' : 'text-destructive font-semibold'}>
                     {p.isNormal ? 'Normal' : 'Out of Range'}
                   </p>
@@ -192,8 +191,11 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
             </TableBody>
         </Table>
       </div>
-      <p className="text-xs text-muted-foreground pt-4 text-center">Disclaimer: This report is AI-generated and for informational purposes only. It is not a substitute for professional medical advice.</p>
-      <p className="text-sm font-semibold text-muted-foreground pt-2 text-center">*** End of Report ***</p>
+      <footer className="space-y-2 border-t pt-4 mt-4 text-center">
+        <p className="text-xs text-muted-foreground">Disclaimer: This report is AI-generated and for informational purposes only. It is not a substitute for professional medical advice.</p>
+        <p className="text-xs text-muted-foreground">Generated on {format(new Date(), 'PPP, p')} | <a href="https://anemocheck.com" className="hover:underline">anemocheck.com</a></p>
+        <p className="text-sm font-semibold text-muted-foreground pt-2">*** End of Report ***</p>
+      </footer>
     </div>
   );
 
