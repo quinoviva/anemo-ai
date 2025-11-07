@@ -34,7 +34,7 @@ export default function HistoryPage() {
         <div>
           <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" />
-            Uploaded Lab Reports
+            Lab Reports
           </h2>
           <p className="text-muted-foreground">
             Your history of AI-powered CBC lab report analyses.
