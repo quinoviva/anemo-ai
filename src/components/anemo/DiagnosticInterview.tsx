@@ -1,23 +1,23 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   runConductDiagnosticInterview,
   runProvidePersonalizedRecommendations,
 } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, FileText, Loader2, Sparkles, Send } from 'lucide-react';
 import type { PersonalizedRecommendationsOutput } from '@/ai/flows/provide-personalized-recommendations';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 type InterviewStep = 'loading' | 'form' | 'generatingReport' | 'reportReady';
-type Answers = Record<string, string>;
+type Answers = Record<string, 'Yes' | 'No' | ''>;
 
 type DiagnosticInterviewProps = {
     imageDescription: string | null;
@@ -68,12 +68,25 @@ export function DiagnosticInterview({ imageDescription, onReset, onAnalysisError
     fetchQuestions();
   }, [fetchQuestions]);
 
-  const handleAnswerChange = (question: string, value: string) => {
+  const handleAnswerChange = (question: string, value: 'Yes' | 'No') => {
     setAnswers(prev => ({ ...prev, [question]: value }));
   };
 
+  const isFormComplete = () => {
+    return questions.length > 0 && questions.every(q => answers[q] === 'Yes' || answers[q] === 'No');
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormComplete()) {
+        toast({
+            title: "Incomplete Form",
+            description: "Please answer all questions before submitting.",
+            variant: "destructive",
+        });
+        return;
+    }
+    
     setIsLoading(true);
     setInterviewStep('generatingReport');
 
@@ -133,22 +146,28 @@ export function DiagnosticInterview({ imageDescription, onReset, onAnalysisError
           <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
             <CardContent className="flex-1 overflow-y-auto space-y-6">
                 {questions.map((q, index) => (
-                    <div key={index} className="grid gap-2">
-                        <Label htmlFor={`question-${index}`}>{q}</Label>
-                        <Textarea
-                            id={`question-${index}`}
-                            placeholder="Your answer..."
-                            value={answers[q] || ''}
-                            onChange={(e) => handleAnswerChange(q, e.target.value)}
-                            required
-                            className="text-base"
-                        />
+                    <div key={index} className="grid gap-3 p-4 border rounded-lg">
+                        <Label htmlFor={`question-${index}`} className="text-base">{q}</Label>
+                        <RadioGroup
+                            defaultValue={answers[q]}
+                            onValueChange={(value: 'Yes' | 'No') => handleAnswerChange(q, value)}
+                            className="flex gap-6"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="Yes" id={`yes-${index}`} />
+                                <Label htmlFor={`yes-${index}`}>Yes</Label>
+                            </div>
+                             <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="No" id={`no-${index}`} />
+                                <Label htmlFor={`no-${index}`}>No</Label>
+                            </div>
+                        </RadioGroup>
                     </div>
                 ))}
             </CardContent>
             <CardFooter>
-              <Button type="submit" disabled={isLoading}>
-                <Send className="mr-2" />
+              <Button type="submit" disabled={isLoading || !isFormComplete()}>
+                {isLoading ? <Loader2 className="mr-2 animate-spin" /> : <Send className="mr-2" />}
                 Submit for Analysis
               </Button>
             </CardFooter>

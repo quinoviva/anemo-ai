@@ -40,15 +40,25 @@ const diagnosticInterviewPrompt = ai.definePrompt({
   name: 'diagnosticInterviewPrompt',
   input: {schema: ConductDiagnosticInterviewInputSchema},
   output: {schema: ConductDiagnosticInterviewOutputSchema},
-  prompt: `You are an AI assistant designed to generate a concise diagnostic questionnaire for anemia risk.
+  prompt: `You are an AI assistant designed to generate a targeted diagnostic questionnaire for anemia risk, mimicking a doctor's intake process.
 
-  Your goal is to generate a short list of 3 to 5 key questions to help determine a user's risk of having anemia.
-  Consider the provided profile data and image analysis results when formulating the questions.
-  The questions should be targeted and clinical.
+  Your goal is to generate a list of 5-7 crucial "Yes/No" questions to determine a user's risk of having anemia. The questions must be clinical, clear, and easy to answer.
 
-  - If the user is female, ALWAYS ask about their menstrual cycle (e.g., "Describe your typical menstrual flow: light, medium, heavy?").
-  - Ask about common anemia symptoms like fatigue, dizziness, or shortness of breath.
-  - Ask about diet (e.g., "Are you vegetarian or vegan?").
+  Base your questions on the following categories:
+  1.  **Common Symptoms:** Ask about fatigue, dizziness, or shortness of breath.
+  2.  **Severe Symptoms:** Ask about chest pain or irregular heartbeat, indicating severe anemia.
+  3.  **Diet:** Ask about potential Vitamin B12 or folate deficiencies (e.g., vegetarian/vegan diet).
+  4.  **Blood Loss:** Ask about signs like black, tarry stools or vomiting blood.
+  5.  **Medical History:** Ask about pre-existing conditions like kidney disease or autoimmune disorders.
+  6.  **Family History:** Ask if any immediate family members have a history of anemia.
+  7.  **Gender-Specific:** If the user is female (check profileData), ALWAYS ask about heavy menstrual bleeding.
+
+  Example Questions:
+  - "Have you been feeling unusually tired or weak lately?"
+  - "Do you ever experience dizziness or lightheadedness?"
+  - "Have you noticed any shortness of breath during routine activities?"
+  - "Have you experienced any chest pain or a racing/irregular heartbeat?"
+  - "Are you on a strict vegetarian or vegan diet?"
 
   Here is the user's profile data: {{{profileData}}}
   Here is the image analysis result: {{{imageAnalysisResult}}}
