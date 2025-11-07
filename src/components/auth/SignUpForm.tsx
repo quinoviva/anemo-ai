@@ -319,11 +319,11 @@ export function SignUpForm() {
       </Card>
       <p className="mt-4 px-8 text-center text-xs text-muted-foreground">
         By continuing, you agree to our <br />
-        <Link href="#" className="underline underline-offset-4 hover:text-primary">
+        <Link href="/terms-of-service" className="underline underline-offset-4 hover:text-primary">
             Terms of Service
         </Link>
         {' '}and{' '}
-        <Link href="#" className="underline underline-offset-4 hover:text-primary">
+        <Link href="/privacy-policy" className="underline underline-offset-4 hover:text-primary">
             Privacy Policy
         </Link>
       </p>
