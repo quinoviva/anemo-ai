@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Hospital, Stethoscope, Loader2 } from 'lucide-react';
 import { ChatbotPopup } from '@/components/anemo/ChatbotPopup';
 import Link from 'next/link';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { runFindNearbyClinics } from '@/app/actions';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -28,13 +29,27 @@ type Clinic = {
 
 export default function DashboardPage() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [location, setLocation] = useState('Iloilo City');
+
+  useEffect(() => {
+    if (user && firestore) {
+      const userDocRef = doc(firestore, 'users', user.uid);
+      getDoc(userDocRef).then((docSnap) => {
+        if (docSnap.exists() && docSnap.data().address) {
+          setLocation(docSnap.data().address);
+        }
+      });
+    }
+  }, [user, firestore]);
 
   useEffect(() => {
     const fetchClinics = async () => {
+      setIsLoading(true);
       try {
-        const response = await runFindNearbyClinics({ query: 'Iloilo City' });
+        const response = await runFindNearbyClinics({ query: location });
         const clinicsWithIcons = response.results.map((clinic) => ({
           ...clinic,
           icon:
@@ -47,13 +62,12 @@ export default function DashboardPage() {
         setClinics(clinicsWithIcons);
       } catch (error) {
         console.error("Failed to fetch clinics:", error);
-        // Optionally, set some error state to show in the UI
       } finally {
         setIsLoading(false);
       }
     };
     fetchClinics();
-  }, []);
+  }, [location]);
 
   const welcomeMessage = user?.displayName
     ? `Welcome, ${user.displayName.split(' ')[0]}!`
@@ -68,7 +82,7 @@ export default function DashboardPage() {
         <p className="mx-auto max-w-2xl text-lg font-bold text-muted-foreground">
           {welcomeMessage}
         </p>
-        <p className="mx-auto max-w-2xl text-muted-foreground">
+        <p className="mx-auto max-w-2xl text-muted-foreground text-base">
           Your intelligent health companion for early anemia detection. Get an instant risk assessment by uploading a photo, receive personalized health advice, and find nearby healthcare providers in Iloilo.
         </p>
         <div className="flex justify-center gap-4">
@@ -86,9 +100,9 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Nearby Healthcare Providers</CardTitle>
+            <CardTitle>Nearby Healthcare Providers in {location}</CardTitle>
             <CardDescription>
-              A quick look at some of the available doctors, hospitals, and clinics in Iloilo City.
+              A quick look at some of the available doctors, hospitals, and clinics.
             </CardDescription>
           </CardHeader>
           <CardContent>

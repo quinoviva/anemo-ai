@@ -54,6 +54,7 @@ const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
   lastName: z.string().min(1, 'Last name is required.'),
   photoURL: z.string().url('Must be a valid URL.').optional().or(z.literal('')),
+  address: z.string().optional(),
   // Medical Info
   dateOfBirth: z.date().optional(),
   sex: z.string().optional(),
@@ -83,6 +84,7 @@ export default function ProfilePage() {
       firstName: '',
       lastName: '',
       photoURL: '',
+      address: '',
       dateOfBirth: undefined,
       sex: '',
       height: '',
@@ -107,6 +109,7 @@ export default function ProfilePage() {
             firstName: data.firstName || '',
             lastName: data.lastName || '',
             photoURL: data.photoURL || user.photoURL || '',
+            address: data.address || '',
             dateOfBirth: medicalInfo.dateOfBirth ? (medicalInfo.dateOfBirth as Timestamp).toDate() : undefined,
             sex: medicalInfo.sex || '',
             height: medicalInfo.height || '',
@@ -185,6 +188,7 @@ export default function ProfilePage() {
           lastName: data.lastName,
           email: user.email, // email is immutable
           photoURL: data.photoURL,
+          address: data.address,
           medicalInfo: {
             dateOfBirth: data.dateOfBirth,
             sex: data.sex,
@@ -304,6 +308,22 @@ export default function ProfilePage() {
                 <Input value={user.email || ''} disabled />
                  <p className="text-sm text-muted-foreground">Email cannot be changed.</p>
               </div>
+               <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="e.g., Molo, Iloilo City, Philippines" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your address is used to find nearby healthcare providers.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
             </CardContent>
           </Card>
 
