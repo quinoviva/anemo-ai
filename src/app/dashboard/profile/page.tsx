@@ -39,9 +39,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, User, LogIn } from 'lucide-react';
+import { Loader2, Upload, User, LogIn, Info } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cn } from '@/lib/utils';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 
 const profileSchema = z.object({
@@ -59,6 +60,11 @@ const profileSchema = z.object({
   conditions: z.string().optional(),
   medications: z.string().optional(),
   familyHistory: z.string().optional(),
+  // Women's Health
+  lastMenstrualPeriod: z.string().optional(),
+  cycleLength: z.coerce.number().positive('Must be a positive number.').optional().or(z.literal('')),
+  flowDuration: z.coerce.number().positive('Must be a positive number.').optional().or(z.literal('')),
+  flowIntensity: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -90,8 +96,15 @@ export default function ProfilePage() {
       conditions: '',
       medications: '',
       familyHistory: '',
+      lastMenstrualPeriod: '',
+      cycleLength: '',
+      flowDuration: '',
+      flowIntensity: '',
     },
   });
+
+  const watchSex = form.watch('sex');
+  const isFemale = watchSex === 'Female';
 
   const formatDate = (date: Date | undefined): string => {
     if (!date) return '';
@@ -101,6 +114,21 @@ export default function ProfilePage() {
     const year = d.getFullYear();
     return `${month}/${day}/${year}`;
   }
+
+  const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: keyof ProfileFormValues) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
+    if (value.length > 8) {
+      value = value.slice(0, 8);
+    }
+    
+    if (value.length > 4) {
+      value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+    } else if (value.length > 2) {
+      value = `${value.slice(0, 2)}/${value.slice(2)}`;
+    }
+    
+    form.setValue(fieldName, value);
+  };
 
   useEffect(() => {
     if (user && firestore && !initialDataLoaded && !isGuest) {
@@ -114,10 +142,11 @@ export default function ProfilePage() {
           let dobValue = medicalInfo.dateOfBirth;
           if (dobValue instanceof Timestamp) {
             dobValue = formatDate(dobValue.toDate());
-          } else if (typeof dobValue === 'string') {
-             // assume it's already in the right format or handle it
-          } else {
-            dobValue = '';
+          }
+
+          let lmpValue = medicalInfo.lastMenstrualPeriod;
+          if (lmpValue instanceof Timestamp) {
+            lmpValue = formatDate(lmpValue.toDate());
           }
 
           form.reset({
@@ -125,7 +154,7 @@ export default function ProfilePage() {
             lastName: data.lastName || '',
             photoURL: data.photoURL || user.photoURL || '',
             address: data.address || '',
-            dateOfBirth: dobValue,
+            dateOfBirth: dobValue || '',
             sex: medicalInfo.sex || '',
             height: medicalInfo.height || '',
             weight: medicalInfo.weight || '',
@@ -134,6 +163,10 @@ export default function ProfilePage() {
             conditions: medicalInfo.conditions || '',
             medications: medicalInfo.medications || '',
             familyHistory: medicalInfo.familyHistory || '',
+            lastMenstrualPeriod: lmpValue || '',
+            cycleLength: medicalInfo.cycleLength || '',
+            flowDuration: medicalInfo.flowDuration || '',
+            flowIntensity: medicalInfo.flowIntensity || '',
           });
         } else {
           // Pre-fill from auth if no doc exists
@@ -184,25 +217,20 @@ export default function ProfilePage() {
     }
   };
 
+  const convertDateStringToDate = (dateString: string | undefined): Date | undefined => {
+      if (!dateString || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+        return undefined;
+      }
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? undefined : date;
+  }
+
   const onSubmit = async (data: ProfileFormValues) => {
     if (!user || !auth.currentUser || isGuest) return;
     setIsLoading(true);
 
-    let dateOfBirthForFirestore: Date | string | undefined = data.dateOfBirth;
-
-    if (data.dateOfBirth && /^\d{2}\/\d{2}\/\d{4}$/.test(data.dateOfBirth)) {
-      dateOfBirthForFirestore = new Date(data.dateOfBirth);
-      if (isNaN(dateOfBirthForFirestore.getTime())) {
-         toast({
-          title: 'Invalid Date',
-          description: 'Please enter a valid date in MM/DD/YYYY format.',
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-        return;
-      }
-    }
-
+    const dateOfBirthForFirestore = convertDateStringToDate(data.dateOfBirth);
+    const lastMenstrualPeriodForFirestore = convertDateStringToDate(data.lastMenstrualPeriod);
 
     try {
       // 1. Update Firebase Auth Profile
@@ -232,6 +260,11 @@ export default function ProfilePage() {
             conditions: data.conditions,
             medications: data.medications,
             familyHistory: data.familyHistory,
+            // Women's Health data
+            lastMenstrualPeriod: lastMenstrualPeriodForFirestore,
+            cycleLength: data.cycleLength,
+            flowDuration: data.flowDuration,
+            flowIntensity: data.flowIntensity,
           },
         },
         { merge: true }
@@ -254,22 +287,6 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
-  
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
-    if (value.length > 8) {
-      value = value.slice(0, 8);
-    }
-    
-    if (value.length > 4) {
-      value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
-    } else if (value.length > 2) {
-      value = `${value.slice(0, 2)}/${value.slice(2)}`;
-    }
-    
-    form.setValue('dateOfBirth', value);
-  };
-
 
   if (!user || !initialDataLoaded) {
     return (
@@ -417,7 +434,7 @@ export default function ProfilePage() {
                         <Input
                           placeholder="MM/DD/YYYY"
                           {...field}
-                          onChange={handleDateChange}
+                          onChange={(e) => handleDateInputChange(e, 'dateOfBirth')}
                           value={field.value || ''}
                         />
                       </FormControl>
@@ -569,6 +586,93 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+
+          {isFemale && (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Women's Health Mode</CardTitle>
+                    <CardDescription>
+                        Provide optional menstrual health data for a more accurate, AI-assisted anemia analysis.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                     <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertDescription>
+                            This information is optional but can significantly improve the accuracy of your anemia risk assessment. It is stored securely and used only for analysis.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <FormField
+                            control={form.control}
+                            name="lastMenstrualPeriod"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Last Menstrual Period</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                        placeholder="MM/DD/YYYY"
+                                        {...field}
+                                        onChange={(e) => handleDateInputChange(e, 'lastMenstrualPeriod')}
+                                        value={field.value || ''}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="flowIntensity"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Typical Flow Intensity</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select intensity" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                    <SelectItem value="Light">Light</SelectItem>
+                                    <SelectItem value="Medium">Medium</SelectItem>
+                                    <SelectItem value="Heavy">Heavy</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="cycleLength"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Typical Cycle Length (Days)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="e.g., 28" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="flowDuration"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Typical Flow Duration (Days)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="e.g., 5" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
+          )}
 
           <div className="flex justify-end">
             <Button type="submit" disabled={isLoading || isUploading}>

@@ -300,6 +300,9 @@ export function SignUpForm() {
                   </FormItem>
                 )}
               />
+              <FormDescription>
+                For female users, signing up enables the Gemini Women’s Health Mode, which uses optional menstrual data for a more precise anemia analysis. Your data is kept private and secure.
+              </FormDescription>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign Up
