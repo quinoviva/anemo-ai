@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,119 +11,96 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Camera, Video, RefreshCw, XCircle, FlipHorizontal, Sparkles, Upload, Send } from 'lucide-react';
+import { Loader2, XCircle, Sparkles, Upload, Send, FileUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { runAnalyzeCbcReport } from '@/app/actions';
-import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHeader, TableHead, TableRow } from '../ui/table';
+import { Input } from '../ui/input';
 
 type LabReportCaptureProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-type CaptureStep = 'camera' | 'analyzing' | 'result' | 'saving';
+type AnalysisStep = 'upload' | 'analyzing' | 'result' | 'saving';
 
 export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [step, setStep] = useState<CaptureStep>('camera');
+  const [step, setStep] = useState<AnalysisStep>('upload');
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const { user } = useUser();
   const firestore = useFirestore();
 
-  const stopStream = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
+  const resetState = () => {
+    setStep('upload');
+    setAnalysisResult(null);
+    setSelectedFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
     }
-  }, [stream]);
-
-  const startStream = useCallback(async () => {
-    stopStream();
-    try {
-      const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
-      setStream(newStream);
-      setHasPermission(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-      }
-    } catch (error) {
-      setHasPermission(false);
-      toast({
-        variant: 'destructive',
-        title: 'Camera Access Denied',
-        description: 'Please enable camera permissions in your browser settings.',
-      });
-    }
-  }, [facingMode, stopStream, toast]);
-
-  useEffect(() => {
-    if (isOpen) {
-      startStream();
-    } else {
-      stopStream();
-    }
-    return () => stopStream();
-  }, [isOpen, startStream, stopStream]);
-  
-  const handleFlipCamera = () => {
-    setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
+    setPreviewUrl(null);
   };
 
   const handleClose = () => {
-    setStep('camera');
-    setAnalysisResult(null);
+    resetState();
     onClose();
   };
+  
+  const handleFileChange = (file: File | null) => {
+    if (!file) return;
 
-  const handleCaptureAndAnalyze = () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!file.type.startsWith('image/')) {
+        toast({
+            title: 'Invalid File',
+            description: 'Please upload a valid image file.',
+            variant: 'destructive',
+        });
+        return;
+    }
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+
+  const handleAnalyze = () => {
+    if (!selectedFile) return;
     
     setStep('analyzing');
-    stopStream();
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const dataUri = e.target?.result as string;
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-    const dataUri = canvas.toDataURL('image/jpeg');
-
-    runAnalyzeCbcReport({ photoDataUri: dataUri })
-      .then(result => {
-        if (!result.parameters || result.parameters.length === 0) {
+       try {
+         const result = await runAnalyzeCbcReport({ photoDataUri: dataUri });
+         if (!result.parameters || result.parameters.length === 0) {
             toast({
                 title: 'Analysis Failed',
                 description: result.summary || 'Could not read the lab report. Please try again with a clearer image.',
                 variant: 'destructive'
             })
-            setStep('camera');
-            startStream();
+            setStep('upload');
             return;
         }
         setAnalysisResult(result);
         setStep('result');
-      })
-      .catch(err => {
-        toast({
+       } catch (err) {
+         toast({
           title: 'AI Analysis Error',
-          description: err.message || 'An unexpected error occurred.',
+          description: err instanceof Error ? err.message : 'An unexpected error occurred.',
           variant: 'destructive',
         });
-        setStep('camera');
-        startStream();
-      });
+        setStep('upload');
+       }
+    };
+    reader.readAsDataURL(selectedFile);
   };
 
   const handleSaveResult = async () => {
@@ -159,36 +136,52 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
       });
       setStep('result');
     }
-  }
+  };
 
 
-  const renderCameraView = () => (
+  const renderUploadView = () => (
     <>
       <DialogHeader>
-        <DialogTitle>Scan CBC Lab Report</DialogTitle>
-        <DialogDescription>Position your lab report in the frame and capture a clear, well-lit image.</DialogDescription>
+        <DialogTitle>Upload CBC Lab Report</DialogTitle>
+        <DialogDescription>Select or drag and drop a clear, well-lit image of your lab report.</DialogDescription>
       </DialogHeader>
-      <div className="py-4 space-y-4">
-        {hasPermission === false ? (
-          <Alert variant="destructive">
-            <XCircle className="h-4 w-4" />
-            <AlertTitle>Camera Access Required</AlertTitle>
-            <AlertDescription>Please grant camera permissions to continue.</AlertDescription>
-          </Alert>
+      <div 
+        className="py-4 space-y-4"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+            e.preventDefault();
+            handleFileChange(e.dataTransfer.files[0]);
+        }}
+    >
+        {previewUrl ? (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden border bg-black mx-auto max-w-sm">
+                <img src={previewUrl} alt="Lab report preview" className="w-full h-full object-contain" />
+            </div>
         ) : (
-          <div className="relative w-full aspect-[9/16] rounded-lg overflow-hidden border bg-black mx-auto max-w-sm">
-            <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-            {hasPermission === null && <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50"><Loader2 className="h-8 w-8 animate-spin text-white" /></div>}
-          </div>
+             <div className="flex flex-col items-center justify-center text-center p-10 border-2 border-dashed rounded-lg">
+                <FileUp className="h-12 w-12 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">Drag & drop an image here</p>
+                <p className="text-xs text-muted-foreground">or</p>
+                <Button variant="link" size="sm" onClick={() => inputRef.current?.click()}>
+                    Browse files
+                </Button>
+            </div>
         )}
+         <Input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+        />
       </div>
       <DialogFooter className='sm:justify-between items-center'>
-        <Button onClick={handleFlipCamera} variant="outline" size="icon" aria-label="Flip camera">
-          <FlipHorizontal />
+        <Button onClick={() => { setSelectedFile(null); if(previewUrl) URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }} variant="outline" disabled={!selectedFile}>
+          Change Image
         </Button>
-        <Button onClick={handleCaptureAndAnalyze} disabled={!hasPermission}>
-          <Camera className="mr-2" />
-          Capture & Analyze
+        <Button onClick={handleAnalyze} disabled={!selectedFile}>
+          <Send className="mr-2" />
+          Analyze
         </Button>
       </DialogFooter>
     </>
@@ -238,7 +231,7 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
         </Table>
       </div>
       <DialogFooter>
-        <Button variant="outline" onClick={() => { setStep('camera'); startStream(); }}>Retake</Button>
+        <Button variant="outline" onClick={() => setStep('upload')}>Re-upload</Button>
         <Button onClick={handleSaveResult} disabled={step === 'saving'}>
             {step === 'saving' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save to History
@@ -254,9 +247,9 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
         return renderAnalyzingView();
       case 'result':
         return renderResultView();
-      case 'camera':
+      case 'upload':
       default:
-        return renderCameraView();
+        return renderUploadView();
     }
   }
 
@@ -264,7 +257,6 @@ export function LabReportCapture({ isOpen, onClose }: LabReportCaptureProps) {
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-md">
         {renderContent()}
-        <canvas ref={canvasRef} className="hidden"></canvas>
       </DialogContent>
     </Dialog>
   );

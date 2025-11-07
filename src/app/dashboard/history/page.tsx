@@ -3,7 +3,7 @@
 import { AnalysisHistoryList } from '@/components/anemo/AnalysisHistoryList';
 import { LabReportCapture } from '@/components/anemo/LabReportCapture';
 import { Button } from '@/components/ui/button';
-import { Camera, FileText } from 'lucide-react';
+import { Upload, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 export default function HistoryPage() {
@@ -19,8 +19,8 @@ export default function HistoryPage() {
           </p>
         </div>
         <Button onClick={() => setShowLabCapture(true)}>
-          <Camera className="mr-2 h-4 w-4" />
-          Scan Lab Report
+          <Upload className="mr-2 h-4 w-4" />
+          Upload Lab Report
         </Button>
       </div>
 
