@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Eye, FileText, Plus, LogIn, User, Loader2 } from 'lucide-react';
+import { Eye, FileText, Plus, LogIn, User, Loader2, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
@@ -126,6 +126,10 @@ export function AnalysisHistoryList() {
                       <Eye className="h-4 w-4" />
                       <span className="sr-only">View Report</span>
                     </Button>
+                     <Button variant="ghost" size="icon" onClick={() => setSelectedReport(item)}>
+                      <Download className="h-4 w-4" />
+                      <span className="sr-only">Download Report</span>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -138,6 +142,7 @@ export function AnalysisHistoryList() {
         report={selectedReport}
         isOpen={!!selectedReport}
         onClose={() => setSelectedReport(null)}
+        startDownload={true}
       />
     </>
   );

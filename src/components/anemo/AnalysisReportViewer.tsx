@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { format } from 'date-fns';
@@ -25,9 +25,10 @@ type AnalysisReportViewerProps = {
   report: ReportType | null;
   isOpen: boolean;
   onClose: () => void;
+  startDownload?: boolean;
 };
 
-export function AnalysisReportViewer({ report, isOpen, onClose }: AnalysisReportViewerProps) {
+export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = false }: AnalysisReportViewerProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();
@@ -75,15 +76,28 @@ export function AnalysisReportViewer({ report, isOpen, onClose }: AnalysisReport
       });
     } finally {
       setIsDownloading(false);
+      onClose(); // Close the dialog after download attempt
     }
   };
   
+  useEffect(() => {
+    if (isOpen && startDownload) {
+      // Use a timeout to allow the dialog to render before starting the download.
+      const timer = setTimeout(() => {
+        handleDownloadPdf();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, startDownload]);
+
+
   if (!report) return null;
 
   const isAnemiaPositive = report.summary?.toLowerCase().includes('anemia');
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen && !startDownload} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Analysis Report</DialogTitle>
