@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { format, differenceInYears } from 'date-fns';
+import { format } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -123,13 +123,6 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
 
   const isAnemiaPositive = report.summary?.toLowerCase().includes('anemia');
   
-  const getAge = () => {
-    if (userData?.medicalInfo?.dateOfBirth?.toDate) {
-      return differenceInYears(new Date(), userData.medicalInfo.dateOfBirth.toDate());
-    }
-    return 'N/A';
-  }
-
   const ReportContent = () => (
     <div className="p-6 rounded-lg border bg-background space-y-4 relative overflow-hidden">
         {/* Watermark */}
@@ -166,11 +159,9 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
             </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 text-sm">
-            <div><span className="font-semibold">Patient:</span> {user?.displayName || 'N/A'}</div>
-            <div><span className="font-semibold">Age:</span> {getAge()}</div>
-            <div><span className="font-semibold">Sex:</span> {userData?.medicalInfo?.sex || 'N/A'}</div>
-            <div className="col-span-3"><span className="font-semibold">Source:</span> {report.hospitalName || 'N/A'}</div>
+        <div className="space-y-1 text-sm">
+            <p><span className="font-semibold">Patient:</span> <span className="font-bold">{user?.displayName || 'N/A'}</span></p>
+            <p><span className="font-semibold">Source:</span> {report.hospitalName || 'N/A'}</p>
         </div>
       </header>
 
