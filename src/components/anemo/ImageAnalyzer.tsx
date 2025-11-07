@@ -147,8 +147,8 @@ export function ImageAnalyzer({ initialImageFile, initialImageDataUri, onReset }
   
 
   const AnalysisWorkspace = () => (
-    <div className="grid md:grid-cols-2 gap-6 h-full">
-      <Card className='flex flex-col'>
+    <div className="flex flex-col gap-6 h-full">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileImage /> Image Analysis
@@ -159,7 +159,7 @@ export function ImageAnalyzer({ initialImageFile, initialImageDataUri, onReset }
             <CardDescription className='text-destructive'>{imageDescription || "Analyzing..."}</CardDescription>
           )}
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-center">
+        <CardContent>
             {imageUrl && (
               <div className="space-y-4">
                 <div className="relative aspect-video rounded-md overflow-hidden border bg-black">
@@ -186,18 +186,16 @@ export function ImageAnalyzer({ initialImageFile, initialImageDataUri, onReset }
         </CardContent>
       </Card>
 
-      <div className='flex flex-col gap-6 h-full'>
-        {analysisStep === 'interview' && (
-           <DiagnosticInterview 
-             imageDescription={imageDescription}
-             onAnalysisError={(err) => {
-                setError(err);
-                setAnalysisStep('error');
-             }}
-             onReset={resetState}
-            />
-        )}
-      </div>
+      {analysisStep === 'interview' && (
+         <DiagnosticInterview 
+           imageDescription={imageDescription}
+           onAnalysisError={(err) => {
+              setError(err);
+              setAnalysisStep('error');
+           }}
+           onReset={resetState}
+          />
+      )}
     </div>
   );
 
