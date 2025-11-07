@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageSquare } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Chatbot } from '@/components/anemo/Chatbot';
 
 export function ChatbotPopup() {
@@ -17,7 +17,7 @@ export function ChatbotPopup() {
           size="icon"
           className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
         >
-          <MessageSquare className="h-8 w-8" />
+          <Bot className="h-8 w-8" />
           <span className="sr-only">Open Chat</span>
         </Button>
       </PopoverTrigger>
