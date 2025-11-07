@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Download, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { ReportType } from './AnalysisHistoryList';
+import { useUser } from '@/firebase';
 
 type AnalysisReportViewerProps = {
   report: ReportType | null;
@@ -32,6 +33,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
   const reportRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();
+  const { user } = useUser();
 
   const handleDownloadPdf = async () => {
     // For direct downloads, the modal isn't rendered, so we create a temporary element.
@@ -39,7 +41,13 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
     element.style.position = 'absolute';
     element.style.left = '-9999px';
     element.style.width = '800px'; // A fixed width for consistent PDF output
-    element.innerHTML = reportRef.current?.innerHTML || '';
+    
+    const reportContentElement = document.getElementById(`pdf-content-${report?.id}`);
+    
+    if (reportContentElement) {
+        element.innerHTML = reportContentElement.innerHTML;
+    }
+
     document.body.appendChild(element);
 
     const input = startDownload ? element : reportRef.current;
@@ -84,14 +92,16 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
         variant: 'destructive',
       });
     } finally {
-      document.body.removeChild(element);
+      if (document.body.contains(element)) {
+        document.body.removeChild(element);
+      }
       setIsDownloading(false);
       onClose(); // Close the dialog/reset state after download attempt
     }
   };
   
   useEffect(() => {
-    if (isOpen && startDownload) {
+    if (isOpen && startDownload && report?.id) {
       const timer = setTimeout(() => {
         handleDownloadPdf();
       }, 50); // Short delay to ensure content is available for capture
@@ -104,44 +114,74 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
   if (!report) return null;
 
   const isAnemiaPositive = report.summary?.toLowerCase().includes('anemia');
+  
+  const ReportContent = () => (
+    <div className="p-4 rounded-lg border bg-background space-y-6">
+      <header className="flex items-start justify-between border-b pb-4">
+        <div className="flex items-center gap-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-10 w-10 text-primary"
+          >
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            <path d="M3.22 12H9.5l.7-1 2.1 4.2 1.6-3.2 1.6 3.2h3.22" />
+          </svg>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">Anemo Check</h2>
+            <p className="text-sm text-muted-foreground">AI Lab Report Analysis</p>
+          </div>
+        </div>
+        <div className="text-right text-sm">
+          <p className="font-semibold">{user?.displayName || 'User'}</p>
+          <p className="text-muted-foreground">{report.createdAt ? format(report.createdAt.toDate(), 'PPP, p') : 'N/A'}</p>
+        </div>
+      </header>
+
+      <div className="space-y-4">
+        <Alert variant={isAnemiaPositive ? 'destructive' : 'default'}>
+            <AlertTitle>Summary</AlertTitle>
+            <AlertDescription>{report.summary}</AlertDescription>
+        </Alert>
+
+        <Table>
+            <TableHeader>
+            <TableRow>
+                <TableHead>Parameter</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Status</TableHead>
+            </TableRow>
+            </TableHeader>
+            <TableBody>
+            {report.parameters.map((p: any, i: number) => (
+                <TableRow key={i}>
+                <TableCell className="font-medium">{p.parameter}</TableCell>
+                <TableCell>{p.value} {p.unit}</TableCell>
+                <TableCell>
+                    <Badge variant={p.isNormal ? 'default' : 'destructive'}>
+                    {p.isNormal ? 'Normal' : 'Out of Range'}
+                    </Badge>
+                </TableCell>
+                </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+      </div>
+      <p className="text-xs text-muted-foreground pt-4 text-center">Disclaimer: This report is AI-generated and for informational purposes only. It is not a substitute for professional medical advice.</p>
+    </div>
+  );
 
   // If startDownload is true, this component renders nothing visible.
   // It just triggers the download effect. The content is captured off-screen.
   if (startDownload) {
       return (
-        <div ref={reportRef} style={{ display: 'none' }}>
-           {/* This content is for the PDF, not for display */}
-            <div className="p-4 rounded-lg border bg-background space-y-4">
-            <h2 className="text-xl font-bold">Analysis Report</h2>
-            <p className="text-sm text-muted-foreground">Date: {report.createdAt ? format(report.createdAt.toDate(), 'PPP, p') : 'N/A'}</p>
-            <Alert variant={isAnemiaPositive ? 'destructive' : 'default'}>
-                <AlertTitle>Summary</AlertTitle>
-                <AlertDescription>{report.summary}</AlertDescription>
-            </Alert>
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Parameter</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Status</TableHead>
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {report.parameters.map((p: any, i: number) => (
-                    <TableRow key={i}>
-                    <TableCell className="font-medium">{p.parameter}</TableCell>
-                    <TableCell>{p.value} {p.unit}</TableCell>
-                    <TableCell>
-                        <Badge variant={p.isNormal ? 'default' : 'destructive'}>
-                        {p.isNormal ? 'Normal' : 'Out of Range'}
-                        </Badge>
-                    </TableCell>
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>
-            <p className="text-xs text-muted-foreground pt-4">Disclaimer: This report is AI-generated and for informational purposes only. It is not a substitute for professional medical advice.</p>
-            </div>
+        <div id={`pdf-content-${report.id}`} style={{ display: 'none' }}>
+           <ReportContent />
         </div>
       );
   }
@@ -149,7 +189,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
   // This is the visible modal for viewing
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Analysis Report</DialogTitle>
           <DialogDescription>
@@ -158,36 +198,8 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
         </DialogHeader>
 
         <ScrollArea className="max-h-[60vh] my-4">
-            <div ref={reportRef} className="p-4 rounded-lg border bg-background">
-                <div className="space-y-4">
-                <Alert variant={isAnemiaPositive ? 'destructive' : 'default'}>
-                    <AlertTitle>Summary</AlertTitle>
-                    <AlertDescription>{report.summary}</AlertDescription>
-                </Alert>
-
-                <Table>
-                    <TableHeader>
-                    <TableRow>
-                        <TableHead>Parameter</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead>Status</TableHead>
-                    </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                    {report.parameters.map((p: any, i: number) => (
-                        <TableRow key={i}>
-                        <TableCell className="font-medium">{p.parameter}</TableCell>
-                        <TableCell>{p.value} {p.unit}</TableCell>
-                        <TableCell>
-                            <Badge variant={p.isNormal ? 'default' : 'destructive'}>
-                            {p.isNormal ? 'Normal' : 'Out of Range'}
-                            </Badge>
-                        </TableCell>
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-                </div>
+            <div ref={reportRef}>
+               <ReportContent />
             </div>
         </ScrollArea>
 
