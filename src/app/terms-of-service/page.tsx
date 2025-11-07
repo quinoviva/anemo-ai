@@ -1,15 +1,26 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-secondary py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
+        <div className="mb-4">
+          <Button asChild variant="ghost">
+            <Link href="/login">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Login
+            </Link>
+          </Button>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold tracking-tight text-center">Terms of Service</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-zinc max-w-none dark:prose-invert">
+          <CardContent className="prose prose-zinc max-w-none dark:prose-invert space-y-4">
             <p>
               Welcome to Anemo Check, an AI-powered web application designed to help users detect
               possible signs of anemia through image analysis and health-related insights. By using
@@ -37,7 +48,7 @@ export default function TermsOfServicePage() {
               You may use Anemo Check as a guest or sign in through Google via Firebase
               Authentication.
             </p>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 You are responsible for maintaining the confidentiality of your account and ensuring
                 that your login credentials are secure.
@@ -49,7 +60,7 @@ export default function TermsOfServicePage() {
 
             <h2>4. Use of the Service</h2>
             <p>By using Anemo Check, you agree:</p>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 Not to misuse the platform or attempt unauthorized access to systems, data, or
                 servers.
@@ -62,7 +73,7 @@ export default function TermsOfServicePage() {
             </p>
 
             <h2>5. Image and Data Usage</h2>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 Uploaded images are processed securely through Firebase Storage and analyzed by
                 Gemini AI solely for anemia detection and related features.
@@ -79,7 +90,7 @@ export default function TermsOfServicePage() {
             </ul>
 
             <h2>6. AI Limitations and Disclaimer</h2>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 While Anemo Check uses advanced AI models to detect possible signs of anemia, it
                 may produce inaccurate or incomplete results.
@@ -96,7 +107,7 @@ export default function TermsOfServicePage() {
             </ul>
 
             <h2>7. Women’s Health Mode and Personal Data</h2>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 If you identify as female, the system may activate Gemini Women’s Health Mode,
                 which includes menstrual data processing to refine anemia risk insights.
@@ -110,7 +121,7 @@ export default function TermsOfServicePage() {
 
             <h2>8. Limitation of Liability</h2>
             <p>Anemo Check, its developers, and partners are not responsible for:</p>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 Any harm, loss, or damage resulting from reliance on AI-generated results.
               </li>

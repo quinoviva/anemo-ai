@@ -1,15 +1,26 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-secondary py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
+        <div className="mb-4">
+          <Button asChild variant="ghost">
+            <Link href="/login">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Login
+            </Link>
+          </Button>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold tracking-tight text-center">Privacy Policy</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-zinc max-w-none dark:prose-invert">
+          <CardContent className="prose prose-zinc max-w-none dark:prose-invert space-y-4">
             <p>
               Welcome to Anemo Check — an AI-powered web application that helps detect possible
               signs of anemia through image and symptom analysis. Your privacy and data protection
@@ -23,7 +34,7 @@ export default function PrivacyPolicyPage() {
               analysis.
             </p>
             <h3>a. Information You Provide</h3>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 <strong>Account Information:</strong> When you sign in using Google via Firebase
                 Authentication, we may collect your name, email address, and profile photo.
@@ -43,7 +54,7 @@ export default function PrivacyPolicyPage() {
             </ul>
 
             <h3>b. Information Collected Automatically</h3>
-            <ul>
+            <ul className="space-y-2">
                 <li><strong>Device Data:</strong> We may collect your device type, browser version, and operating system for performance optimization.</li>
                 <li><strong>Usage Data:</strong> Includes pages visited, features used, timestamps, and actions within the app to improve user experience.</li>
                 <li><strong>Location Data (Optional):</strong> If you use the “Search for Doctor” feature, your inputted location helps find nearby clinics or hospitals.</li>
@@ -51,7 +62,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>2. How We Use Your Information</h2>
             <p>We use your data to:</p>
-            <ul>
+            <ul className="space-y-2">
               <li>Analyze images and provide AI-based anemia insights.</li>
               <li>Generate and store personalized health reports in Firebase Firestore.</li>
               <li>Enable interactive chatbot features and multilingual responses.</li>
@@ -65,7 +76,7 @@ export default function PrivacyPolicyPage() {
             <p>We do not sell, trade, or rent your personal information to anyone.</p>
 
             <h2>3. Data Storage and Security</h2>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 Your data is stored securely using Google Firebase services, which comply with
                 industry security standards.
@@ -78,14 +89,14 @@ export default function PrivacyPolicyPage() {
             </ul>
 
             <h2>4. Women’s Health Data (For Female Users Only)</h2>
-            <ul>
+            <ul className="space-y-2">
                 <li>If you identify as female, Gemini Women’s Health Mode may request optional menstrual information (e.g., last period date, flow intensity, duration) to improve the accuracy of anemia assessment.</li>
                 <li>Providing this information is entirely optional.</li>
                 <li>All menstrual data is stored securely and used only for health analysis purposes.</li>
             </ul>
 
             <h2>5. AI and Data Processing</h2>
-            <ul>
+            <ul className="space-y-2">
                 <li>Anemo Check uses Gemini AI and a custom CNN (Convolutional Neural Network) model to process your images and responses.</li>
                 <li>AI-generated outputs are probabilistic and may not always be medically accurate.</li>
                 <li>Data processed by Gemini is used only to generate the diagnostic and conversational responses you see in-app.</li>
@@ -94,7 +105,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>6. Third-Party Services</h2>
             <p>We rely on trusted third-party services to operate safely and efficiently:</p>
-            <ul>
+            <ul className="space-y-2">
                 <li><strong>Firebase Authentication</strong> – for user login and identity management.</li>
                 <li><strong>Firebase Storage</strong> – for image upload and secure storage.</li>
                 <li><strong>Firebase Firestore</strong> – for storing user reports and history.</li>
@@ -105,7 +116,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>7. User Control and Data Rights</h2>
             <p>You have the right to:</p>
-            <ul>
+            <ul className="space-y-2">
               <li>Access, correct, or delete your personal data.</li>
               <li>
                 Withdraw consent for optional data (e.g., menstrual info or chatbot use).
