@@ -154,12 +154,14 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
             </div>
             </div>
             <div className="text-right">
-                <p className='font-bold text-lg'>{user?.displayName || 'N/A'}</p>
+                <p className='font-bold text-lg'>{user?.displayName || ''}</p>
             </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{report.hospitalName || 'N/A'}</span>
-        </p>
+        {report.hospitalName && (
+            <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{report.hospitalName}</span>
+            </p>
+        )}
       </header>
 
       <div className="space-y-4">
@@ -215,7 +217,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
         <DialogHeader>
           <DialogTitle>Analysis Report</DialogTitle>
           <DialogDescription>
-            Report from {report.createdAt ? format(report.createdAt.toDate(), 'PPP, p') : 'N/A'}. This is not medical advice.
+            This is not medical advice.
           </DialogDescription>
         </DialogHeader>
 
