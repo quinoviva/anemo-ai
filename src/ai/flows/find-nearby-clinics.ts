@@ -81,9 +81,9 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'Well-family-Midwife-Clinic', type: 'Clinic', address: 'Estancia, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
         { name: 'AMR Doctor\'s Hospital', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
         { name: 'Salubris Medical Center', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
-        { name: 'Leganes Medical Clinic', type: 'Clinic', address: 'Leganes, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
-        { name: 'The Medical City Clinic', type: 'Clinic', address: 'Pavia, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
-        { name: 'Tiu Clinic And Hospital', type: 'Hospital', address: 'Tigbauan, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
+        { name: 'Leganes Medical Clinic', type: 'Clinic', address: 'Leganes, Iloilo', contact: 'N/A', hours: 'N_A', notes: 'Private' },
+        { name: 'The Medical City Clinic', type: 'Clinic', address: 'Pavia, Iloilo', contact: 'N/A', hours: 'N_A', notes: 'Private' },
+        { name: 'Tiu Clinic And Hospital', type: 'Hospital', address: 'Tigbauan, Iloilo', contact: 'N/A', hours: 'N_A', notes: 'Private' },
     ];
     
     // The tool now returns the full list, and the AI will filter it.
