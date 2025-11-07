@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PrivacyPolicyPage() {
@@ -8,7 +9,7 @@ export default function PrivacyPolicyPage() {
           <CardHeader>
             <CardTitle className="text-3xl font-bold tracking-tight text-center">Privacy Policy</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-zinc mx-auto max-w-none dark:prose-invert">
+          <CardContent className="prose prose-zinc max-w-none dark:prose-invert">
             <p>
               Welcome to Anemo Check — an AI-powered web application that helps detect possible
               signs of anemia through image and symptom analysis. Your privacy and data protection

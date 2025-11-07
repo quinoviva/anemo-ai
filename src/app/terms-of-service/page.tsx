@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function TermsOfServicePage() {
@@ -8,7 +9,7 @@ export default function TermsOfServicePage() {
           <CardHeader>
             <CardTitle className="text-3xl font-bold tracking-tight text-center">Terms of Service</CardTitle>
           </CardHeader>
-          <CardContent className="prose prose-zinc mx-auto max-w-none dark:prose-invert">
+          <CardContent className="prose prose-zinc max-w-none dark:prose-invert">
             <p>
               Welcome to Anemo Check, an AI-powered web application designed to help users detect
               possible signs of anemia through image analysis and health-related insights. By using
