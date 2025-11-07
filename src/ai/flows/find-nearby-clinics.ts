@@ -86,18 +86,8 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'Tiu Clinic And Hospital', type: 'Hospital', address: 'Tigbauan, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private' },
     ];
     
-    if (!query) {
-      return { results: simulatedResults };
-    }
-
-    const lowerCaseQuery = query.toLowerCase();
-    const filteredResults = simulatedResults.filter(r => 
-      r.name.toLowerCase().includes(lowerCaseQuery) ||
-      r.address.toLowerCase().includes(lowerCaseQuery) ||
-      (r.notes && r.notes.toLowerCase().includes(lowerCaseQuery))
-    );
-
-    return { results: filteredResults };
+    // The tool now returns the full list, and the AI will filter it.
+    return { results: simulatedResults };
   }
 );
 
@@ -119,11 +109,9 @@ const findNearbyClinicsFlow = ai.defineFlow(
     const llmResponse = await ai.generate({
       prompt: `You are an expert local guide for Iloilo City and Province, Philippines. Your goal is to help users find the nearest and most relevant medical facilities.
 
-      Use the 'searchForHealthcareProviders' tool to find real-time information based on the user's query.
-
-      User query: "${input.query}"
-
-      Analyze the user's query and use the search tool to get a list of providers. The query to the tool should be a simplified keyword from the user's request (e.g., if the user asks for 'hospitals in molo', the query should be 'molo'). Then, return the results from the tool directly. Do not make up information.
+      1. Call the 'searchForHealthcareProviders' tool to get a comprehensive list of all available healthcare providers.
+      2. Analyze the user's query: "${input.query}"
+      3. From the full list provided by the tool, select and return ONLY the results that are most relevant to the user's query. For example, if the user asks for "hospitals in Molo", you should return hospitals whose address contains "Molo". If the query is empty, return all results.
       `,
       model: 'googleai/gemini-2.5-flash',
       tools: [searchForHealthcareProviders],
@@ -131,20 +119,15 @@ const findNearbyClinicsFlow = ai.defineFlow(
         schema: FindNearbyClinicsOutputSchema,
       },
     });
-
-    const toolResponse = llmResponse.toolRequests;
-
-    if (toolResponse.length > 0 && toolResponse[0].tool.name === 'searchForHealthcareProviders') {
-        const searchResult = await searchForHealthcareProviders(toolResponse[0].input);
-        return searchResult;
-    }
     
-    // If the model decides not to use the tool, or provides a direct answer.
+    // The model should decide whether to call the tool or return a direct answer based on the prompt.
     if(llmResponse.output) {
       return llmResponse.output;
     }
 
-    // Fallback for when no tool is called and no direct output is given.
+    // Fallback for when no direct output is given.
     return { results: [] };
   }
 );
+
+    
