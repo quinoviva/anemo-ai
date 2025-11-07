@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -11,16 +12,26 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Eye, Download, FileText, Plus, LogIn, User, Loader2 } from 'lucide-react';
+import { Eye, FileText, Plus, LogIn, User, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
 import { format } from 'date-fns';
+import { AnalysisReportViewer } from './AnalysisReportViewer';
+import type { AnalyzeCbcReportOutput } from '@/ai/schemas/cbc-report';
+
+export type ReportType = AnalyzeCbcReportOutput & {
+  id: string;
+  createdAt: {
+    toDate: () => Date;
+  };
+};
 
 export function AnalysisHistoryList() {
   const { user } = useUser();
   const firestore = useFirestore();
   const isGuest = user?.isAnonymous;
+  const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
 
   const labReportsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -92,38 +103,42 @@ export function AnalysisHistoryList() {
   }
 
   return (
-    <Card>
-      <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Summary</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {history.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.createdAt ? format(item.createdAt.toDate(), 'PPP') : 'N/A'}</TableCell>
-                <TableCell>
-                   <Badge variant={getBadgeVariant(item.summary)}>{item.summary}</Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="icon">
-                    <Eye className="h-4 w-4" />
-                    <span className="sr-only">View Report</span>
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <Download className="h-4 w-4" />
-                    <span className="sr-only">Download Report</span>
-                  </Button>
-                </TableCell>
+    <>
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Summary</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {history.map((item: ReportType) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.createdAt ? format(item.createdAt.toDate(), 'PPP') : 'N/A'}</TableCell>
+                  <TableCell>
+                    <Badge variant={getBadgeVariant(item.summary)}>{item.summary}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => setSelectedReport(item)}>
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">View Report</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      
+      <AnalysisReportViewer
+        report={selectedReport}
+        isOpen={!!selectedReport}
+        onClose={() => setSelectedReport(null)}
+      />
+    </>
   );
 }
