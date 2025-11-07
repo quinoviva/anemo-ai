@@ -34,7 +34,16 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
   const { toast } = useToast();
 
   const handleDownloadPdf = async () => {
-    const input = reportRef.current;
+    // For direct downloads, the modal isn't rendered, so we create a temporary element.
+    const element = document.createElement('div');
+    element.style.position = 'absolute';
+    element.style.left = '-9999px';
+    element.style.width = '800px'; // A fixed width for consistent PDF output
+    element.innerHTML = reportRef.current?.innerHTML || '';
+    document.body.appendChild(element);
+
+    const input = startDownload ? element : reportRef.current;
+
     if (!input) {
       toast({
         title: 'Download Error',
@@ -50,7 +59,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
       const canvas = await html2canvas(input, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null,
+        backgroundColor: document.body.classList.contains('dark') ? '#09090b' : '#ffffff',
       });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -75,29 +84,71 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
         variant: 'destructive',
       });
     } finally {
+      document.body.removeChild(element);
       setIsDownloading(false);
-      onClose(); // Close the dialog after download attempt
+      onClose(); // Close the dialog/reset state after download attempt
     }
   };
   
   useEffect(() => {
     if (isOpen && startDownload) {
-      // Use a timeout to allow the dialog to render before starting the download.
       const timer = setTimeout(() => {
         handleDownloadPdf();
-      }, 100);
+      }, 50); // Short delay to ensure content is available for capture
       return () => clearTimeout(timer);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, startDownload]);
+  }, [isOpen, startDownload, report]);
 
 
   if (!report) return null;
 
   const isAnemiaPositive = report.summary?.toLowerCase().includes('anemia');
 
+  // If startDownload is true, this component renders nothing visible.
+  // It just triggers the download effect. The content is captured off-screen.
+  if (startDownload) {
+      return (
+        <div ref={reportRef} style={{ display: 'none' }}>
+           {/* This content is for the PDF, not for display */}
+            <div className="p-4 rounded-lg border bg-background space-y-4">
+            <h2 className="text-xl font-bold">Analysis Report</h2>
+            <p className="text-sm text-muted-foreground">Date: {report.createdAt ? format(report.createdAt.toDate(), 'PPP, p') : 'N/A'}</p>
+            <Alert variant={isAnemiaPositive ? 'destructive' : 'default'}>
+                <AlertTitle>Summary</AlertTitle>
+                <AlertDescription>{report.summary}</AlertDescription>
+            </Alert>
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Parameter</TableHead>
+                    <TableHead>Value</TableHead>
+                    <TableHead>Status</TableHead>
+                </TableRow>
+                </TableHeader>
+                <TableBody>
+                {report.parameters.map((p: any, i: number) => (
+                    <TableRow key={i}>
+                    <TableCell className="font-medium">{p.parameter}</TableCell>
+                    <TableCell>{p.value} {p.unit}</TableCell>
+                    <TableCell>
+                        <Badge variant={p.isNormal ? 'default' : 'destructive'}>
+                        {p.isNormal ? 'Normal' : 'Out of Range'}
+                        </Badge>
+                    </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+            <p className="text-xs text-muted-foreground pt-4">Disclaimer: This report is AI-generated and for informational purposes only. It is not a substitute for professional medical advice.</p>
+            </div>
+        </div>
+      );
+  }
+
+  // This is the visible modal for viewing
   return (
-    <Dialog open={isOpen && !startDownload} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Analysis Report</DialogTitle>

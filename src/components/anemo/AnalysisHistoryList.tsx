@@ -31,7 +31,8 @@ export function AnalysisHistoryList() {
   const { user } = useUser();
   const firestore = useFirestore();
   const isGuest = user?.isAnonymous;
-  const [selectedReport, setSelectedReport] = useState<ReportType | null>(null);
+  const [reportToView, setReportToView] = useState<ReportType | null>(null);
+  const [reportToDownload, setReportToDownload] = useState<ReportType | null>(null);
 
   const labReportsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -122,11 +123,11 @@ export function AnalysisHistoryList() {
                     <Badge variant={getBadgeVariant(item.summary)}>{item.summary}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => setSelectedReport(item)}>
+                    <Button variant="ghost" size="icon" onClick={() => setReportToView(item)}>
                       <Eye className="h-4 w-4" />
                       <span className="sr-only">View Report</span>
                     </Button>
-                     <Button variant="ghost" size="icon" onClick={() => setSelectedReport(item)}>
+                     <Button variant="ghost" size="icon" onClick={() => setReportToDownload(item)}>
                       <Download className="h-4 w-4" />
                       <span className="sr-only">Download Report</span>
                     </Button>
@@ -138,10 +139,18 @@ export function AnalysisHistoryList() {
         </CardContent>
       </Card>
       
+      {/* Modal for viewing the report */}
       <AnalysisReportViewer
-        report={selectedReport}
-        isOpen={!!selectedReport}
-        onClose={() => setSelectedReport(null)}
+        report={reportToView}
+        isOpen={!!reportToView}
+        onClose={() => setReportToView(null)}
+      />
+
+      {/* Invisible component instance to handle direct downloads */}
+      <AnalysisReportViewer
+        report={reportToDownload}
+        isOpen={!!reportToDownload}
+        onClose={() => setReportToDownload(null)}
         startDownload={true}
       />
     </>
