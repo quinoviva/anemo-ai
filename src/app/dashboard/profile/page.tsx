@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -217,12 +218,12 @@ export default function ProfilePage() {
     }
   };
 
-  const convertDateStringToDate = (dateString: string | undefined): Date | undefined => {
+  const convertDateStringToDate = (dateString: string | undefined): Date | null => {
       if (!dateString || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-        return undefined;
+        return null;
       }
       const date = new Date(dateString);
-      return isNaN(date.getTime()) ? undefined : date;
+      return isNaN(date.getTime()) ? null : date;
   }
 
   const onSubmit = async (data: ProfileFormValues) => {
@@ -685,3 +686,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    
