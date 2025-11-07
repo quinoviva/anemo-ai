@@ -254,6 +254,22 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
+  
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
+    if (value.length > 8) {
+      value = value.slice(0, 8);
+    }
+    
+    if (value.length > 4) {
+      value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+    } else if (value.length > 2) {
+      value = `${value.slice(0, 2)}/${value.slice(2)}`;
+    }
+    
+    form.setValue('dateOfBirth', value);
+  };
+
 
   if (!user || !initialDataLoaded) {
     return (
@@ -398,7 +414,12 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Date of Birth</FormLabel>
                       <FormControl>
-                        <Input placeholder="MM/DD/YYYY" {...field} />
+                        <Input
+                          placeholder="MM/DD/YYYY"
+                          {...field}
+                          onChange={handleDateChange}
+                          value={field.value || ''}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
