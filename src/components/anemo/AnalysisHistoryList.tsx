@@ -11,8 +11,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Eye, Download, FileText, Plus } from 'lucide-react';
+import { Eye, Download, FileText, Plus, LogIn, User } from 'lucide-react';
 import Link from 'next/link';
+import { useUser } from '@/firebase';
 
 
 // Mock data is removed to reflect a new user's empty state.
@@ -22,6 +23,9 @@ const history: any[] = [
 ];
 
 export function AnalysisHistoryList() {
+  const { user } = useUser();
+  const isGuest = user?.isAnonymous;
+
   const getBadgeVariant = (status: string) => {
     switch (status) {
       case 'High Risk':
@@ -32,6 +36,28 @@ export function AnalysisHistoryList() {
         return 'default';
     }
   };
+
+  if (isGuest) {
+     return (
+        <Card className="text-center">
+            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+                 <div className="p-4 bg-primary/10 rounded-full">
+                    <User className="h-10 w-10 text-primary" />
+                 </div>
+                <h3 className="text-xl font-semibold">History Not Saved in Guest Mode</h3>
+                <p className="text-muted-foreground">
+                    To save and review your analysis history, please create an account.
+                </p>
+                <Button asChild className="mt-2">
+                    <Link href="/signup">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Sign Up Now
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
+    )
+  }
 
   if (history.length === 0) {
     return (
