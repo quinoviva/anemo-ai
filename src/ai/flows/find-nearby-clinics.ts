@@ -75,7 +75,7 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'Rep. Pedro G. Trono Memorial District Hospital', type: 'Hospital', address: 'Guimbal, Iloilo', contact: '(033) 315-5158', hours: '24/7', notes: 'Government, Level 1. Serves southern Iloilo.' },
         { name: 'Jesus M. Colmenares Memorial District Hospital', type: 'Hospital', address: 'Balasan, Iloilo', contact: '(033) 397-0402', hours: '24/7', notes: 'Government, Level 1. Serves northern Iloilo.' },
         { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Government, Level 1. Key hospital for central Iloilo.' },
-        { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', notes: 'Government, Level 1. Formerly Pototan District Hospital.' },
+        { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Formerly Pototan District Hospital.' },
         { name: 'Ramon D. Duremdes District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Government, Level 1.' },
         { name: 'Ramon Tabiana Memorial District Hospital', type: 'Hospital', address: 'Cabatuan, Iloilo', contact: '(033) 522-8228', hours: '24/7', notes: 'Government, Level 1.' },
         { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Specializes in maternal and child health.' },
