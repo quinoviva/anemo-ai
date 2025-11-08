@@ -14,6 +14,12 @@ export function Footer() {
             <p className="text-muted-foreground text-sm max-w-md">
               Helping you stay informed about your health through smart, image-based anemia screening.
             </p>
+            <div className="pt-4 text-xs text-muted-foreground">
+             <p className="font-semibold">Disclaimer</p>
+             <p className="mt-1">
+               Anemo Check is a health-assistive tool, not a medical diagnostic service. Always consult a qualified healthcare provider for professional diagnosis and treatment.
+            </p>
+            </div>
           </div>
 
           {/* Empty div for spacing on medium screens and up */}
@@ -44,16 +50,11 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          
-           <div className="mt-12 border-t pt-8 text-center text-xs text-muted-foreground md:col-span-3">
-             <p className="font-semibold">Disclaimer</p>
-             <p className="mt-2">
-               Anemo Check is a health-assistive tool, not a medical diagnostic service. Always consult a qualified healthcare provider for professional diagnosis and treatment.
-            </p>
-             <p className="mt-8">
+        </div>
+        <div className="mt-12 border-t pt-8 text-center text-xs text-muted-foreground">
+            <p>
                 &copy; {new Date().getFullYear()} AnemoCheck. All rights reserved.
             </p>
-          </div>
         </div>
       </div>
     </footer>
