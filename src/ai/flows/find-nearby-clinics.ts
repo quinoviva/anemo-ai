@@ -64,7 +64,7 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'Healthlink Laboratory and Diagnostic Center', type: 'Clinic', address: 'Infante Ave, Molo, Iloilo City', contact: '(033) 337-8848', hours: 'Mon-Sat, 7am-4pm', website: 'N/A', notes: 'Comprehensive laboratory tests, including blood work.' },
         { name: 'The Medical City Clinic - Atria', type: 'Clinic', address: 'Atria Park District, Mandurriao, Iloilo City', contact: 'N/A', hours: 'Mall Hours', website: 'N/A', notes: 'Outpatient clinic with laboratory and imaging services.' },
         { name: 'Hi-Precision Diagnostics Iloilo', type: 'Clinic', address: 'Benigno Aquino Ave, Mandurriao, Iloilo City', contact: '(033) 321-7554', hours: 'Mon-Sat, 6am-5pm', website: 'https://www.hi-precision.com.ph/', notes: 'Nationally recognized diagnostic center with a branch in Iloilo.' },
-        { name: 'St. Elizabeth Medical and Diagnostic Center', type: 'Clinic', address: 'Jaro, Iloilo City', contact: 'N/A', hours: 'N/A', notes: 'Provides various laboratory and diagnostic procedures.' },
+        { name: 'St. Elizabeth Medical and Diagnostic Center', type: 'Clinic', address: 'Jaro, Iloilo City', contact: 'N/A', hours: 'N/A', website: 'N/A', notes: 'Provides various laboratory and diagnostic procedures.' },
 
         // Iloilo Province - District Hospitals (Government)
         { name: 'Aleosan District Hospital', type: 'Hospital', address: 'Alimodian, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Basic laboratory services.' },
