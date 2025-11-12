@@ -67,24 +67,24 @@ const searchForHealthcareProviders = ai.defineTool(
         { name: 'St. Elizabeth Medical and Diagnostic Center', type: 'Clinic', address: 'Jaro, Iloilo City', contact: 'N/A', hours: 'N/A', website: 'N/A', notes: 'Provides various laboratory and diagnostic procedures.' },
 
         // Iloilo Province - District Hospitals (Government)
-        { name: 'Aleosan District Hospital', type: 'Hospital', address: 'Alimodian, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Basic laboratory services.' },
-        { name: 'Barotac Viejo District Hospital', type: 'Hospital', address: 'Barotac Viejo, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Basic laboratory services.' },
-        { name: 'Dr. Ricardo S. Provido Memorial District Hospital', type: 'Hospital', address: 'Calinog, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Serves Calinog and surrounding areas.' },
-        { name: 'Don Jose S. Monfort Medical Center Extension Hospital', type: 'Hospital', address: 'Barotac Nuevo, Iloilo', contact: '(033) 361-2651', hours: '24/7', notes: 'Government, Level 1. Equipped for primary laboratory tests.' },
-        { name: 'Federico Roman Tirador, Sr. Memorial District Hospital', type: 'Hospital', address: 'Janiuay, Iloilo', contact: '(033) 531-8077', hours: '24/7', notes: 'Government, Level 1. Provides essential laboratory diagnostics.' },
-        { name: 'Rep. Pedro G. Trono Memorial District Hospital', type: 'Hospital', address: 'Guimbal, Iloilo', contact: '(033) 315-5158', hours: '24/7', notes: 'Government, Level 1. Serves southern Iloilo.' },
-        { name: 'Jesus M. Colmenares Memorial District Hospital', type: 'Hospital', address: 'Balasan, Iloilo', contact: '(033) 397-0402', hours: '24/7', notes: 'Government, Level 1. Serves northern Iloilo.' },
-        { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', notes: 'Government, Level 1. Key hospital for central Iloilo.' },
+        { name: 'Aleosan District Hospital', type: 'Hospital', address: 'Alimodian, Iloilo', contact: 'N/A', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Basic laboratory services.' },
+        { name: 'Barotac Viejo District Hospital', type: 'Hospital', address: 'Barotac Viejo, Iloilo', contact: 'N/A', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Basic laboratory services.' },
+        { name: 'Dr. Ricardo S. Provido Memorial District Hospital', type: 'Hospital', address: 'Calinog, Iloilo', contact: 'N/A', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Serves Calinog and surrounding areas.' },
+        { name: 'Don Jose S. Monfort Medical Center Extension Hospital', type: 'Hospital', address: 'Barotac Nuevo, Iloilo', contact: '(033) 361-2651', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Equipped for primary laboratory tests.' },
+        { name: 'Federico Roman Tirador, Sr. Memorial District Hospital', type: 'Hospital', address: 'Janiuay, Iloilo', contact: '(033) 531-8077', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Provides essential laboratory diagnostics.' },
+        { name: 'Rep. Pedro G. Trono Memorial District Hospital', type: 'Hospital', address: 'Guimbal, Iloilo', contact: '(033) 315-5158', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Serves southern Iloilo.' },
+        { name: 'Jesus M. Colmenares Memorial District Hospital', type: 'Hospital', address: 'Balasan, Iloilo', contact: '(033) 397-0402', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Serves northern Iloilo.' },
+        { name: 'Lambunao District Hospital', type: 'Hospital', address: 'Lambunao, Iloilo', contact: '(033) 533-7053', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Key hospital for central Iloilo.' },
         { name: 'Iloilo Provincial Hospital', type: 'Hospital', address: 'Pototan, Iloilo', contact: '(033) 529-8131', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Formerly Pototan District Hospital.' },
-        { name: 'Ramon D. Duremdes District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', notes: 'Government, Level 1.' },
-        { name: 'Ramon Tabiana Memorial District Hospital', type: 'Hospital', address: 'Cabatuan, Iloilo', contact: '(033) 522-8228', hours: '24/7', notes: 'Government, Level 1.' },
-        { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1. Specializes in maternal and child health.' },
-        { name: 'Sara District Hospital', type: 'Hospital', address: 'Sara, Iloilo', contact: 'N/A', hours: '24/7', notes: 'Government, Level 1.' },
+        { name: 'Ramon D. Duremdes District Hospital', type: 'Hospital', address: 'Dumangas, Iloilo', contact: '(033) 361-2022', hours: '24/7', website: 'N/A', notes: 'Government, Level 1.' },
+        { name: 'Ramon Tabiana Memorial District Hospital', type: 'Hospital', address: 'Cabatuan, Iloilo', contact: '(033) 522-8228', hours: '24/7', website: 'N/A', notes: 'Government, Level 1.' },
+        { name: 'San Joaquin Mother and Child Hospital', type: 'Hospital', address: 'San Joaquin, Iloilo', contact: 'N/A', hours: '24/7', website: 'N/A', notes: 'Government, Level 1. Specializes in maternal and child health.' },
+        { name: 'Sara District Hospital', type: 'Hospital', address: 'Sara, Iloilo', contact: 'N/A', hours: '24/7', website: 'N/A', notes: 'Government, Level 1.' },
 
         // Iloilo Province - Private Hospitals & Clinics
-        { name: 'Medicus Laboratory - Passi', type: 'Clinic', address: 'Passi City, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Branch of Medicus providing laboratory services in Passi City.' },
-        { name: 'AMR Doctor\'s Hospital', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private hospital in southern Iloilo.' },
-        { name: 'Salubris Medical Center', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', notes: 'Private.' },
+        { name: 'Medicus Laboratory - Passi', type: 'Clinic', address: 'Passi City, Iloilo', contact: 'N/A', hours: 'N/A', website: 'N/A', notes: 'Branch of Medicus providing laboratory services in Passi City.' },
+        { name: 'AMR Doctor\'s Hospital', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', website: 'N/A', notes: 'Private hospital in southern Iloilo.' },
+        { name: 'Salubris Medical Center', type: 'Hospital', address: 'Miagao, Iloilo', contact: 'N/A', hours: 'N/A', website: 'N/A', notes: 'Private.' },
     ];
     
     // The tool now returns the full list, and the AI will filter it.
