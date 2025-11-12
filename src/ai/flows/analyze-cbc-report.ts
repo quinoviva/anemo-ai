@@ -24,25 +24,39 @@ const prompt = ai.definePrompt({
   name: 'analyzeCbcReportPrompt',
   input: { schema: AnalyzeCbcReportInputSchema },
   output: { schema: AnalyzeCbcReportOutputSchema },
-  prompt: `You are an expert at reading Complete Blood Count (CBC) lab reports using Optical Character Recognition (OCR). Your task is to analyze the provided image and extract key information.
+  prompt: `You are an expert at reading Complete Blood Count (CBC) lab reports using Optical Character Recognition (OCR). Your task is to analyze the provided image and extract key information with very high accuracy.
 
-  **Instructions:**
+  **CRITICAL Instructions:**
 
-  1.  **Assess Image Quality:** First, determine if the image is a clear, well-lit, and readable photo of a CBC lab report.
-  2.  **Scan the Image:** Analyze the image to identify text and values from the CBC report.
-  3.  **Extract Key Parameters:** Focus on extracting the following key parameters. If a parameter is not present, omit it from the results.
-      - Hemoglobin (HGB or Hb)
-      - Hematocrit (HCT)
-      - Red Blood Cell (RBC) count
-      - Mean Corpuscular Volume (MCV)
-      - Mean Corpuscular Hemoglobin (MCH)
-  4.  **Populate Data:** For each parameter found, extract its value, unit, and reference range. Determine if the value is within the normal range and set 'isNormal' accordingly.
-  5.  **Generate Summary:** Based on your analysis, create a concise, one-sentence summary.
-      - If the image is not a valid CBC report: "The uploaded image does not appear to be a valid CBC lab report." and ensure the parameters array is empty.
-      - If the image is blurry or unreadable: "The image is too blurry or unclear to analyze. Please upload a high-quality, well-lit photo of the report." and ensure the parameters array is empty.
-      - If Hemoglobin/Hematocrit are low: "Hemoglobin level appears below normal, suggesting possible anemia."
-      - If all key values are normal: "All key CBC values appear to be within the normal range."
+  1.  **Assess Image Validity:** Your first and most important task is to determine if the image is a valid CBC lab report.
+      - If the image is **NOT a CBC report** (e.g., a photo of a cat, a landscape, or a different medical document), you MUST return the following JSON object and nothing else:
+        \`\`\`json
+        {
+          "summary": "The uploaded image does not appear to be a valid CBC lab report.",
+          "parameters": []
+        }
+        \`\`\`
+      - If the image **IS a CBC report but is too blurry, dark, or unreadable**, you MUST return the following JSON object and nothing else:
+        \`\`\`json
+        {
+          "summary": "The image is too blurry or unclear to analyze. Please upload a high-quality, well-lit photo of the report.",
+          "parameters": []
+        }
+        \`\`\`
   
+  2.  **If the Image is Valid and Readable:**
+      - **Scan the Image:** Analyze the image to identify text and values from the CBC report.
+      - **Extract Key Parameters:** Focus on extracting the following key parameters. If a parameter is not present, omit it from the results.
+          - Hemoglobin (HGB or Hb)
+          - Hematocrit (HCT)
+          - Red Blood Cell (RBC) count
+          - Mean Corpuscular Volume (MCV)
+          - Mean Corpuscular Hemoglobin (MCH)
+      - **Populate Data:** For each parameter found, extract its value, unit, and reference range. Determine if the value is within the normal range and set 'isNormal' accordingly.
+      - **Generate Summary:** Based on your analysis, create a concise, one-sentence summary.
+          - If Hemoglobin/Hematocrit are low: "Hemoglobin level appears below normal, suggesting possible anemia."
+          - If all key values are normal: "All key CBC values appear to be within the normal range."
+
   **Crucially, do not add any medical advice or diagnosis. Emphasize that this is an AI interpretation and a healthcare professional must be consulted.**
 
   Image of the lab report: {{media url=photoDataUri}}`,
