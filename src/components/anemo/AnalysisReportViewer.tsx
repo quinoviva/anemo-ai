@@ -176,7 +176,7 @@ export function AnalysisReportViewer({ report, isOpen, onClose, startDownload = 
       <div className="space-y-4">
         <Alert variant={isAnemiaPositive ? 'destructive' : 'default'}>
             <AlertTitle>Summary</AlertTitle>
-            <AlertDescription>{report.summary}</AlertDescription>
+            <AlertDescription className="whitespace-pre-wrap">{report.summary}</AlertDescription>
         </Alert>
 
         <Table>
