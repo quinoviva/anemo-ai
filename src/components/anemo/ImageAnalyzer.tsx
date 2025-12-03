@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { UploadCloud, XCircle, Loader2, CheckCircle, RefreshCw, Hand, Eye, User } from 'lucide-react';
+import { UploadCloud, XCircle, Loader2, CheckCircle, RefreshCw, Hand, Eye, User, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DiagnosticInterview } from './DiagnosticInterview';
 
@@ -133,7 +134,7 @@ export function ImageAnalyzer() {
   const allAnalysesComplete = Object.values(analyses).every(a => a.status === 'success');
   
   const allImageDescriptions = allAnalysesComplete 
-    ? Object.entries(analyses).map(([key, value]) => `${key}: ${value.analysisResult}`).join('\n')
+    ? Object.entries(analyses).map(([key, value]) => `Result for ${key}: ${value.analysisResult}`).join('\n')
     : null;
 
   if (showQuestionnaire && allImageDescriptions) {
@@ -157,15 +158,23 @@ export function ImageAnalyzer() {
         ))}
       </div>
        {allAnalysesComplete && (
-        <Card className="text-center">
+        <Card>
             <CardHeader>
-                <CardTitle>All Analyses Complete</CardTitle>
-                <CardDescription>You can now proceed to the questionnaire to get a full report.</CardDescription>
+                <CardTitle className="flex items-center gap-2"><FileText />Combined Analysis Results</CardTitle>
+                <CardDescription>Here is a summary of the analysis for each image. Proceed to the questionnaire to get your personalized report.</CardDescription>
             </CardHeader>
-            <CardContent>
-                <Button onClick={() => setShowQuestionnaire(true)}>
-                    Proceed to Questionnaire
-                </Button>
+            <CardContent className="space-y-4">
+              <div className="space-y-4 rounded-lg border p-4 bg-muted/50">
+                {Object.entries(analyses).map(([key, value]) => (
+                    <div key={key}>
+                      <h4 className="font-semibold capitalize text-foreground">{key.replace('-', ' ')}</h4>
+                      <p className="text-sm text-muted-foreground">{value.analysisResult}</p>
+                    </div>
+                ))}
+              </div>
+              <Button onClick={() => setShowQuestionnaire(true)}>
+                  Proceed to Questionnaire
+              </Button>
             </CardContent>
         </Card>
       )}
