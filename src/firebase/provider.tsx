@@ -54,19 +54,26 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     userError: null,
   });
 
-  // Memoize Firebase services to ensure they are initialized only once
-  const firebaseServices = useMemo(() => {
-    // This check is crucial for client-side only execution
-    if (typeof window !== 'undefined') {
-      return initializeFirebase();
+  // This state will hold the initialized services
+  const [firebaseServices, setFirebaseServices] = useState<{
+    firebaseApp: FirebaseApp;
+    auth: Auth;
+    firestore: Firestore;
+  } | null>(null);
+
+  // This effect runs once on the client to initialize Firebase
+  useEffect(() => {
+    // initializeFirebase now returns an object with the SDKs
+    const services = initializeFirebase();
+    if (services.firebaseApp && services.auth && services.firestore) {
+      setFirebaseServices(services);
     }
-    return null;
   }, []);
 
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
-    if (!firebaseServices || !firebaseServices.auth) { 
-      setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not available.") });
+    // Only run if services are initialized
+    if (!firebaseServices) {
       return;
     }
 
