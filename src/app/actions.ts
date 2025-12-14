@@ -1,5 +1,10 @@
 'use server';
 
+console.log(
+  '[ENV CHECK] Gemini key loaded:',
+  !!process.env.GOOGLE_GENAI_API_KEY
+);
+
 import {
   generateImageDescription,
   GenerateImageDescriptionInput,
