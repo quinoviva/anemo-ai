@@ -77,9 +77,10 @@ This project consists of two main parts that need to run simultaneously in separ
     npm run genkit:watch
     ```
 
-    Cyril Quinoviva
-    owner
-
     The Genkit UI will be available at [http://localhost:4000](http://localhost:4000) for inspecting flows and tools.
 
 You should now have the application fully running locally! Open [http://localhost:9002](http://localhost:9002) in your browser to see the app.
+
+
+    Cyril Quinoviva
+    owner
